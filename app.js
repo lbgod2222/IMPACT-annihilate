@@ -6,13 +6,13 @@ const fs = require('fs');
 const join = require('path').join;
 const logger = require('morgan');
 const config = require('./config');
-const models = require('app/models');
+const models = join(__dirname ,'app/models');
 
 const app = express();
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // bootstrap models for mongeese
@@ -26,9 +26,9 @@ require('./config/routes')(app);
 module.exports = app;
 
 // DO a long-living running staff
-connect()
+connectDb()
   .on('error', console.log)
-  .on('disconnected', connect)
+  .on('disconnected', connectDb)
   .on('open', listen)
 
 // functions

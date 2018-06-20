@@ -5,13 +5,12 @@ const test = require('./env/test');
 const production = require('./env/production');
 
 // commnet set here
-const comment = {
-    root: path.join(__dirname, '..')
+const common = {
+    root: path.join(__dirname, '..'),
+    port: process.env.PORT||3007
 }
-
 module.exports = {
-    development: Object.assign({}, development, comment),
-    test: Object.assign({}, test, comment),
-    production: Object.assign({}, production, comment),
-    port: process.env.PORT || 3000
+    development: Object.assign({}, development, common),
+    test: Object.assign({}, test, common),
+    production: Object.assign({}, production, common)
 }[process.env.NODE_ENV || 'development']

@@ -2,10 +2,13 @@
 const createError = require('http-errors');
 
 // like this
-const user = require('../app/routes/user');
+const user = require('../app/routes/users');
 
 module.exports = function(app) {
-    app.get('/user/:id', user.overall);
+    // post interfaces
+    app.get('/newUser', user.createUser);
+    // get interfaces
+    app.get('/user/:id', user.userInfo);
 
     // 404
     // catch 404 and forward to error handler
@@ -20,7 +23,8 @@ module.exports = function(app) {
         res.locals.error = req.app.get('env') === 'development' ? err : {};
 
         // render the error page
+        console.log(res, 'this is error')
         res.status(err.status || 500);
-        res.render('error');
+        res.send('error');
     });
 }
