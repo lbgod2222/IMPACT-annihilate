@@ -1,12 +1,14 @@
 // collect all the route pieces and 404 error handle page
 const createError = require('http-errors');
+const chalk = require('chalk');
 
 // like this
 const user = require('../app/routes/users');
+const article = require('../app/routes/article');
 
 module.exports = function(app) {
     // post interfaces
-    app.get('/newUser', user.createUser);
+    app.post('/newUser', user.createUser);
     // get interfaces
     app.get('/user/:id', user.userInfo);
 
@@ -23,7 +25,8 @@ module.exports = function(app) {
         res.locals.error = req.app.get('env') === 'development' ? err : {};
 
         // render the error page
-        console.log(res, 'this is error')
+        // console.log(res);
+        console.log(chalk.red('upper is error'));
         res.status(err.status || 500);
         res.send('error');
     });

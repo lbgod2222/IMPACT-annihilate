@@ -24,6 +24,7 @@ const UserSchema = new Schema({
   name: { type: String, default: '' },
   email: { type: String, default: '' },
   username: { type: String, default: '' },
+  age: {type: Number, default: null},
   provider: { type: String, default: '' },
   hashed_password: { type: String, default: '' },
   salt: { type: String, default: '' },
@@ -198,3 +199,6 @@ UserSchema.statics = {
 };
 
 mongoose.model('User', UserSchema);
+var UserModel = mongoose.model('User', UserSchema);
+
+module.exports = UserModel;

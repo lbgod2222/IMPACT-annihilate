@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 // local treat
 const fs = require('fs');
@@ -11,6 +12,7 @@ const models = join(__dirname ,'app/models');
 const app = express();
 
 app.use(logger('dev'));
+app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -26,22 +28,29 @@ require('./config/routes')(app);
 module.exports = app;
 
 // DO a long-living running staff
-connectDb()
-  .on('error', console.log)
-  .on('disconnected', connectDb)
-  .on('open', listen)
+// connectDb()
+//   .on('error', console.log)
+//   .on('disconnected', connectDb)
+//   .on('open', listen)
 
 // functions
-function connectDb() {
-  var option = {
-    server: {
-      socketOption: {
-        keepAlive: 1
-      }
+// function connectDb() {
+var option = {
+  server: {
+    socketOption: {
+      keepAlive: true
     }
-  };
-  return mongoose.connect(config.db, option).connection;
-}
+  }
+};
+mongoose.connect(config.db, option).then(
+  () => {
+   listen(); 
+  },
+  err => {
+    console.log('Connect error!');
+  }
+);
+// }
 
 function listen() {
   if (app.get('env' === 'test')) {
