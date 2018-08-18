@@ -1,4 +1,4 @@
-var express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const chalk = require('chalk');
@@ -11,13 +11,13 @@ exports.userInfo = function(req, res) {
   // 如果在schema里面明示 这里就会默式转换
   let age = Number(req.params.id)
   console.log(typeof age);
-    let that = this;
-    User.find({age: age}, function(err, docs) {
-      console.log(age);
-      if (err) {
-        console.log(chalk.red('ERROR DURING QUERY'));
-      }
-      res.send(docs);
+  let that = this;
+  User.find({age: age}, function(err, docs) {
+    console.log(age);
+    if (err) {
+    console.log(chalk.red('ERROR DURING QUERY'));
+    }
+    res.send(docs);
   })
 }
 

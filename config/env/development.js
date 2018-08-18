@@ -1,3 +1,3 @@
 module.exports = {
-    db: 'mongodb://localhost/noobjs_dev'
+    db: 'mongodb://localhost/annihilate'
 };

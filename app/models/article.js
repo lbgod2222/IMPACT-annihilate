@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-import comment from './comment'
+// import comment from './comment'
 
 const ArticleSchema = new Schema({
   title: String,
@@ -13,7 +13,7 @@ const ArticleSchema = new Schema({
   // comments collections refs
   comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
   meta: {
-    votes: Number
+    votes: {type: Number, default: 0}
   }
 });
 

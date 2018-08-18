@@ -4,13 +4,21 @@ const chalk = require('chalk');
 
 // like this
 const user = require('../app/routes/users');
-const article = require('../app/routes/article');
+const article = require('../app/routes/articles');
 
 module.exports = function(app) {
+    // below are test for example
     // post interfaces
     app.post('/newUser', user.createUser);
     // get interfaces
     app.get('/user/:id', user.userInfo);
+    // below are what i want
+
+    // read article list
+    app.get('/articles', article.articleList);
+
+    // post article
+    app.post('/article', article.writeArticle);
 
     // 404
     // catch 404 and forward to error handler
@@ -26,7 +34,7 @@ module.exports = function(app) {
 
         // render the error page
         // console.log(res);
-        console.log(chalk.red('upper is error'));
+        console.log(chalk.cyan(err, '---upper is error'));
         res.status(err.status || 500);
         res.send('error');
     });
