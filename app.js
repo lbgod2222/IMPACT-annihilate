@@ -44,7 +44,7 @@ var option = {
 };
 mongoose.connect(config.db, option).then(
   () => {
-   listen(); 
+   listen();
   },
   err => {
     console.log('Connect error!');

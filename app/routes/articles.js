@@ -12,7 +12,6 @@ const { dueSortby } = require('../utils/utils');
 exports.articleList = function(req, res) {
   let count;
   let data;
-  let errMsg;
   Article.estimatedDocumentCount(function(err, num) {
     if (err) {
       errCallback(err, res);
@@ -23,7 +22,7 @@ exports.articleList = function(req, res) {
   let { offset, limit, sortBy } = req.query;
   offset = Number(offset);
   limit = Number(limit);
-  Article.find({}).
+  Article.find({}, ['title', 'author', 'meta', 'lastModified']).
   skip(offset).
   limit(limit).
   sort(dueSortby(sortBy)).
@@ -31,6 +30,21 @@ exports.articleList = function(req, res) {
       data = article;
       getCountCallback(data, count, res);
     });
+}
+
+// Query for article detail
+exports.article = function(req, res) {
+  let data;
+  let { id } = req.params;
+  Article.find({_id: id}).
+  exec((err, article) => {
+    if (err) {
+      errCallback(err, res);
+      return
+    }
+    data = article;
+    getCallback(data, res);
+  })
 }
 
 // POST Routes1

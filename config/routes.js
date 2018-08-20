@@ -16,6 +16,8 @@ module.exports = function(app) {
 
     // read article list
     app.get('/articles', article.articleList);
+    // read article detail
+    app.get('/article/:id', article.article);
 
     // post article
     app.post('/article', article.writeArticle);
