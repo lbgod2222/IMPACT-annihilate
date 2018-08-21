@@ -13,6 +13,7 @@ const ArticleSchema = new Schema({
   // comments collections refs
   comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
   meta: {
+    tags: {type: Array, default: []},
     votes: {type: Number, default: 0}
   }
 });
