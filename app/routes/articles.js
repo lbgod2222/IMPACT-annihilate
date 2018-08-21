@@ -12,21 +12,32 @@ const { dueSortby } = require('../utils/utils');
 exports.articleList = function(req, res) {
   let count;
   let data;
-  let queryData;
-  Article.estimatedDocumentCount(function(err, num) {
-    if (err) {
-      errCallback(err, res);
-      return
-    }
-    count = num;
-  });
+  let queryData = {};
   let { offset, limit, sortBy } = req.query;
+  
   if (req.query.tags) {
-    queryData = req.query.tags.split(',')
+    let obj = []
+    let paraArr = req.query.tags.split(',');
+    paraArr.forEach(e => {
+      let temp = {}
+      temp[meta.tags] = e
+      obj.push(temp);
+    });
+    queryData = {
+      $and: obj
+    }
+  } else {
+    Article.estimatedDocumentCount(function(err, num) {
+      if (err) {
+        errCallback(err, res);
+        return
+      }
+      count = num;
+    });
   }
   offset = Number(offset);
   limit = Number(limit);
-  Article.find({}, ['title', 'author', 'meta', 'lastModified']).
+  Article.find(queryData, ['title', 'author', 'meta', 'lastModified']).
   skip(offset).
   limit(limit).
   sort(dueSortby(sortBy)).
