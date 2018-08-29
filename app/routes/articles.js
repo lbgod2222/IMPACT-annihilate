@@ -9,6 +9,7 @@ const { dueSortby } = require('../utils/utils');
 
 // Query for article list
 // Params: { offset / limit / sortBy }
+// more: now only accept $and query & all
 exports.articleList = function(req, res) {
   let count;
   let data;
@@ -20,12 +21,16 @@ exports.articleList = function(req, res) {
     let paraArr = req.query.tags.split(',');
     paraArr.forEach(e => {
       let temp = {}
-      temp[meta.tags] = e
+      temp['meta.tags'] = e
       obj.push(temp);
     });
     queryData = {
       $and: obj
     }
+    Article.count(queryData, function(err, num) {
+      count = num;
+    });
+    console.log(queryData);
   } else {
     Article.estimatedDocumentCount(function(err, num) {
       if (err) {

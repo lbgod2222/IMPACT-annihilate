@@ -9,7 +9,7 @@ const ArticleSchema = new Schema({
   title: String,
   author: String,
   content: String,
-  lastModified: {type: Date, default: Date.now},
+  lastModified: {type: Date, default: Date.now()},
   // comments collections refs
   comments: [{type: Schema.Types.ObjectId, ref: 'comment'}],
   meta: {

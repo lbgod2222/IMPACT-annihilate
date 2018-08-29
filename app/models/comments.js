@@ -23,13 +23,13 @@ const CommentSchema = new Schema({
       content: String,
       createdTime: {
         type: Date,
-        default: Date.now
+        default: Date.now()
       }
     }
   ],
   createdTime: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   }
 });
 

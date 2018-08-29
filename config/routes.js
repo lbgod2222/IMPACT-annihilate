@@ -5,6 +5,7 @@ const chalk = require('chalk');
 // like this
 const user = require('../app/routes/users');
 const article = require('../app/routes/articles');
+const comment = require('../app/routes/comments');
 
 module.exports = function(app) {
     // below are test for example
@@ -22,6 +23,12 @@ module.exports = function(app) {
     // post article
     app.post('/article', article.writeArticle);
 
+
+    // read comment
+    app.get('/comments/:aid', comment.getComments);
+
+    // psot comment
+    app.post('/comments/:aid', comment.postComment);
     // 404
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {

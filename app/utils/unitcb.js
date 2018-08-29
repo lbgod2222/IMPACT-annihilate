@@ -4,16 +4,16 @@ const _errCB = {
 	success: false
 }
 const _successCB = {
-	data: null,
+	data: {},
 	success: true
 }
 const _successCountCB = {
-	data: null,
+	data: [],
 	count: 0,
 	success: true
 }
 const _successInfoCB = {
-	message: null,
+	message: '',
 	success: true
 }
 
