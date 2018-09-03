@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const user = require('../app/routes/users');
 const article = require('../app/routes/articles');
 const comment = require('../app/routes/comments');
+const quicklad = require('../app/routes/quicklads');
 
 module.exports = function(app) {
     // below are test for example
@@ -15,6 +16,7 @@ module.exports = function(app) {
     app.get('/user/:id', user.userInfo);
     // below are what i want
 
+    // ARTICLE
     // read article list
     app.get('/articles', article.articleList);
     // read article detail
@@ -23,12 +25,23 @@ module.exports = function(app) {
     // post article
     app.post('/article', article.writeArticle);
 
-
+    // COMMENTS
     // read comment
     app.get('/comments/:aid', comment.getComments);
 
     // psot comment
     app.post('/comments/:aid', comment.postComment);
+    
+    // LADS
+    // read all lads
+    app.get('/lads', quicklad.getAllLads);
+    
+    // read colored lads
+    app.get('/lads/:color', quicklad.getColorLads);
+    
+    // post lads
+    app.post('/lads', quicklad.postLabs);
+
     // 404
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {

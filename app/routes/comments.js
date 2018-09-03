@@ -31,9 +31,6 @@ exports.getComments = function(req, res) {
     // model: 'comment',
     options: {limit: limit}
   }).
-  // skip(offset).
-  // limit(limit).
-  // sort(dueSortby(sortBy)).
   exec((err, comment) => {
     data = comment;
     getCountCallback(data, count, res);
@@ -53,10 +50,12 @@ exports.postComment = function(req, res) {
   comment.save(function(err) {
     if (err) {
       errCallback(err, res);
+      return
     } else {
       Article.findByIdAndUpdate(aid, {$push: {comments: request._id}}, function (err, com) {
         if (err) {
           errCallback(err);
+          return
         }
       })
       postSuccessCallback('post comment success', res);
