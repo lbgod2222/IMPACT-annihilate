@@ -29,11 +29,14 @@ const UserSchema = new Schema({
   hashed_password: { type: String, default: '' },
   salt: { type: String, default: '' },
   authToken: { type: String, default: '' },
-  facebook: {},
-  twitter: {},
-  github: {},
-  google: {},
-  linkedin: {}
+  // articles area
+  articls: [{ type: Schema.Types.ObjectId, ref: 'article' }],
+  // comments area
+  comments: [{ type: Schema.Types.ObjectId, ref: 'comment' }],
+  // lads area
+  lads: [{ type: Schema.Types.ObjectId, ref: 'quicklad' }],
+  // Message box
+  messages: [{ type: Object, default: {}}]
 });
 
 const validatePresenceOf = value => value && value.length;

@@ -9,8 +9,7 @@ const quickladSchema = new Schema({
   createdTime: {type: Date, default: Date.now()},
   lastModified: {type: Date, default: Date.now()},
   tempNick: String,
-  creator: {type: Schema.Types.ObjectId, ref: 'user'},
-  
+  creator: {type: Schema.Types.ObjectId, ref: 'user'}
 });
 
 // Validations

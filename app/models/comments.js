@@ -18,7 +18,7 @@ const CommentSchema = new Schema({
   content: String,
   replies: [
     {
-      // name for both logined & unlogined
+      // replay only for logined user
       name: '',
       content: String,
       createdTime: {
