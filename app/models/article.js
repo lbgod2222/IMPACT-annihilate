@@ -7,7 +7,11 @@ const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
   title: String,
-  author: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'user',
+    required: [true, 'quicklad need createdTime']
+  },
   content: String,
   lastModified: {type: Date, default: Date.now()},
   // comments collections refs
@@ -20,9 +24,27 @@ const ArticleSchema = new Schema({
     cultivated: {type: Number, default: 0}
   },
   // Origin article ignore, but the article from lad should use it
-  seed: {}
+  seed: {
+    type: Schema.Types.ObjectId,
+    ref: 'quicklad'
+  }
 });
 
 // Validations
+const errorArea = 'fail at valid article'
+
+ArticleSchema.path('title').validate((v) => {
+  if (v.length > 50 || v.length < 1) {
+    throw new Error('Invalid article title length');
+  }
+  return true;
+}, errorArea);
+
+ArticleSchema.path('content').validate((v) => {
+  if (v.length > 31000 || v.length < 1) {
+    throw new Error('Invalid article content length');
+  }
+  return true;
+}, errorArea);
 const article = mongoose.model('article', ArticleSchema);
 module.exports = article

@@ -1,5 +1,7 @@
 'use strict';
 
+const regs = require('../utils/validators');
+
 /**
  * Module dependencies.
  */
@@ -25,7 +27,6 @@ const UserSchema = new Schema({
   email: { type: String, default: '' },
   username: { type: String, default: '' },
   age: {type: Number, default: null},
-  provider: { type: String, default: '' },
   hashed_password: { type: String, default: '' },
   salt: { type: String, default: '' },
   authToken: { type: String, default: '' },
@@ -75,7 +76,7 @@ UserSchema.path('name').validate(function (name) {
 UserSchema.path('email').validate(function (email) {
   console.log('validate email')
   if (this.skipValidation()) return true;
-  return email.length;
+  return regs.email(email);
 }, 'Email cannot be blank');
 
 UserSchema.path('email').validate(function (email, fn) {
@@ -94,8 +95,8 @@ UserSchema.path('email').validate(function (email, fn) {
 UserSchema.path('username').validate(function (username) {
   console.log('validate username')
   if (this.skipValidation()) return true;
-  return username.length;
-}, 'Username cannot be blank');
+  return regs.username(username);
+}, 'Register: username should obey reg');
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
   console.log('validate hashed')

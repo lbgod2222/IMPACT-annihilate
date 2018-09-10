@@ -14,7 +14,7 @@ const CommentSchema = new Schema({
   // For unlogined user
   tempNick: String,
   // For future logined user
-  status: Schema.Types.ObjectId,
+  creator: { type: Schema.Types.ObjectId, ref: 'user' },
   content: String,
   replies: [
     {
@@ -34,6 +34,22 @@ const CommentSchema = new Schema({
 });
 
 
-// TODO: Validations
+// Validations
+const errorArea = 'fail at valid comment'
+
+CommentSchema.path('content').validate((v) => {
+  if (v.length > 225 || v.length < 1) {
+    throw new Error('quicklad content should less than 225 chars & more than 1');
+  }
+  return true;
+}, errorArea);
+
+CommentSchema.path('tempNick').validate((v) => {
+  if (v.length > 35 || v.length < 1) {
+    throw new Error('quicklad content should less 35 chars & more than 1');
+  }
+  return true;
+}, errorArea);
+
 const comment = mongoose.model('comment', CommentSchema);
 module.exports = comment

@@ -19,7 +19,7 @@ const _successInfoCB = {
 
 exports.errCallback = (msg, res) => {
 	let response = _errCB;
-	response.message = msg;
+	response.message = msg.message;
 	res.send(response);
 }
 
