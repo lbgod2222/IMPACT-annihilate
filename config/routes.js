@@ -41,6 +41,9 @@ module.exports = function(app) {
     
     // post lads
     app.post('/lads', quicklad.postLabs);
+    
+    // change lads
+    app.put('/lads/:id', quicklad.changeLad);
 
     // 404
     // catch 404 and forward to error handler

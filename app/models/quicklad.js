@@ -9,7 +9,7 @@ const quickladSchema = new Schema({
   createdTime: {
     type: Date,
     default: Date.now(),
-    required: [true, 'quicklad need createdTime']
+    required: [true, '5003']
   },
   lastModified: { type: Date, default: Date.now() },
   tempNick: String,
@@ -20,7 +20,7 @@ const quickladSchema = new Schema({
 // validate: now can reveive array
 quickladSchema.path('content').validate((v) => {
   if (v.length > 225 || v.length < 1) {
-    throw new Error('quicklad content should less than 225 chars & more than 1');
+    throw new Error('5001');
   }
   return true;
 }, 'fail at valid content');
@@ -28,7 +28,7 @@ quickladSchema.path('content').validate((v) => {
 quickladSchema.path('color').validate((v) => {
   let list = ['red', 'purple', 'green', 'black', 'blue', 'yellow']
   if (list[v] === undefined) {
-    throw new Error('quicklad color should be on the list');
+    throw new Error('5002');
   }
   return true;
 }, 'fail at valid color');
