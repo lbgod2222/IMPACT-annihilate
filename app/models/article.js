@@ -3,8 +3,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// import comment from './comment'
-
 const ArticleSchema = new Schema({
   title: String,
   author: {
@@ -35,14 +33,14 @@ const errorArea = 'fail at valid article'
 
 ArticleSchema.path('title').validate((v) => {
   if (v.length > 50 || v.length < 1) {
-    throw new Error('Invalid article title length');
+    throw new Error('5004');
   }
   return true;
 }, errorArea);
 
 ArticleSchema.path('content').validate((v) => {
   if (v.length > 31000 || v.length < 1) {
-    throw new Error('Invalid article content length');
+    throw new Error('5005');
   }
   return true;
 }, errorArea);

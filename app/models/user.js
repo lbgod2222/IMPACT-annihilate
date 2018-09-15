@@ -22,10 +22,11 @@ const oAuthTypes = [
  * User Schema
  */
 
+// TODO: rethink of this schema
 const UserSchema = new Schema({
-  name: { type: String, default: '' },
+  name: { type: String, default: '', unique: true },
   email: { type: String, default: '' },
-  username: { type: String, default: '' },
+  username: { type: String, default: '', unique: true },
   age: {type: Number, default: null},
   hashed_password: { type: String, default: '' },
   salt: { type: String, default: '' },
@@ -77,7 +78,7 @@ UserSchema.path('email').validate(function (email) {
   console.log('validate email')
   if (this.skipValidation()) return true;
   return regs.email(email);
-}, 'Email cannot be blank');
+}, '5008');
 
 UserSchema.path('email').validate(function (email, fn) {
   console.log('validate email2')
@@ -96,7 +97,7 @@ UserSchema.path('username').validate(function (username) {
   console.log('validate username')
   if (this.skipValidation()) return true;
   return regs.username(username);
-}, 'Register: username should obey reg');
+}, '5006');
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
   console.log('validate hashed')
@@ -204,7 +205,7 @@ UserSchema.statics = {
   }
 };
 
-mongoose.model('User', UserSchema);
+// mongoose.model('User', UserSchema);
 var UserModel = mongoose.model('User', UserSchema);
 
 module.exports = UserModel;

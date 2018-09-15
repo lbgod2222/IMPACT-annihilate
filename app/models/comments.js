@@ -3,8 +3,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// import article from './article'
-
 const CommentSchema = new Schema({
   // DBref to article collection
   article: {
@@ -39,14 +37,14 @@ const errorArea = 'fail at valid comment'
 
 CommentSchema.path('content').validate((v) => {
   if (v.length > 225 || v.length < 1) {
-    throw new Error('quicklad content should less than 225 chars & more than 1');
+    throw new Error('5001');
   }
   return true;
 }, errorArea);
 
 CommentSchema.path('tempNick').validate((v) => {
   if (v.length > 35 || v.length < 1) {
-    throw new Error('quicklad content should less 35 chars & more than 1');
+    throw new Error('5005');
   }
   return true;
 }, errorArea);

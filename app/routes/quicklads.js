@@ -13,12 +13,11 @@ const { dueSortby } = require('../utils/utils');
  * @apiParam {String} sortBy (分页) 请求的排序方式。
  */
 
-
 /**
- * @apiError
- * (Quicklad) 5001 Quicklad 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
- * (Quicklad) 5002 Quick 的颜色属性应该在列表中选择('red', 'purple', 'green', 'black', 'blue', 'yellow')(quicklad color should be on the list) 
- * (Quicklad) 5003 Quick 必需创建时间(quicklad need createdTime) 
+ * @apiSuccess
+ * (Quicklad) 2001 Quicklad 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
+ * (Quicklad) 5002 Quicklad 的颜色属性应该在列表中选择('red', 'purple', 'green', 'black', 'blue', 'yellow')(quicklad color should be on the list) 
+ * (Quicklad) 5003 Quicklad 必需创建时间(quicklad need createdTime) 
  */
 
 /**
@@ -103,6 +102,11 @@ exports.getColorLads = (req, res) => {
  * @apiParam {ObjectId} id Quicklad创造者的ID
  * @apiParam {String} content Quicklad更改后的内容
  * @apiParam {String} color Quicklad更改后的颜色
+ * 
+ * @apiError (Error) 5001 Quicklad 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
+ * @apiError (Error) 5002 Quicklad 的颜色属性应该在列表中选择('red', 'purple', 'green', 'black', 'blue', 'yellow')(quicklad color should be on the list) 
+ * 
+ * @apiSuccess (Success) 3004 Quicklad 修改成功 
  */
 exports.changeLad = function(req, res) {
   let request;
@@ -118,17 +122,13 @@ exports.changeLad = function(req, res) {
   if (color) {
     compose.color = color
   }
-  let after = {
-    $set: compose
-  }
-  console.log(after);
-  Quicklad.findOneAndUpdate({'_id': lid}, after,(err, lad) => {
+  Quicklad.findOneAndUpdate({'_id': lid}, compose, (err, lad) => {
     if (err) {
       errCallback(err, res);
       return
     }
-    postSuccessCallback('change lad success', res);
-  })
+    postSuccessCallback('3004', res);
+  });
 }
 
 /**
@@ -142,6 +142,12 @@ exports.changeLad = function(req, res) {
  * @apiParam {Date} lastModified Quicklad上次修改时间
  * @apiParam {String} tempNick Quicklad显示昵称(未登录情况下)
  * @apiParam {ObjectId} creator Quicklad创造者的ID(登录情况下)
+ * 
+ * @apiError (Error) 5001 Quicklad 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
+ * @apiError (Error) 5002 Quicklad 的颜色属性应该在列表中选择('red', 'purple', 'green', 'black', 'blue', 'yellow')(quicklad color should be on the list) 
+ * @apiError (Error) 5003 Quicklad 必需创建时间(quicklad need createdTime) 
+ * 
+ * @apiSuccess (Success) 3003 Quicklad 发布成功 
  */
 exports.postLabs = function(req, res) {
   let request;

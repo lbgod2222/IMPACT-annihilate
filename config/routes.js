@@ -10,38 +10,40 @@ const quicklad = require('../app/routes/quicklads');
 
 module.exports = function(app) {
     // below are test for example
+    // login user
+    app.put('/user/login', user.login)
     // post interfaces
-    app.post('/newUser', user.createUser);
+    app.post('/user', user.createUser);
     // get interfaces
-    app.get('/user/:id', user.userInfo);
-    // below are what i want
+    app.get('/user/:uid', user.userInfo);
 
     // ARTICLE
+    // read somebody's article list
+    app.get('articles/:uid', article.userArticleList);
     // read article list
     app.get('/articles', article.articleList);
     // read article detail
-    app.get('/article/:id', article.article);
-
+    app.get('/article/:aid', article.article);
     // post article
     app.post('/article', article.writeArticle);
+    // change article
+    app.put('/article/:aid', article.changeArticle);
 
     // COMMENTS
     // read comment
     app.get('/comments/:aid', comment.getComments);
-
-    // psot comment
+    // post comment
     app.post('/comments/:aid', comment.postComment);
+    // write reply
+    app.put('/comments/reply/:cid', comment.putReply);
     
     // LADS
     // read all lads
     app.get('/lads', quicklad.getAllLads);
-    
     // read colored lads
     app.get('/lads/:color', quicklad.getColorLads);
-    
     // post lads
     app.post('/lads', quicklad.postLabs);
-    
     // change lads
     app.put('/lads/:id', quicklad.changeLad);
 
