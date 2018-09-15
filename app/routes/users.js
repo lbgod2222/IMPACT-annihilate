@@ -127,7 +127,7 @@ exports.changeUser = function(req, res) {
 }
 
 /**
- * @api {put} /user/:uid/:target 修改user信息
+ * @api {put} /user/:uid/:target 更新user链接信息
  * @apiName updateContent
  * @apiGroup User
  * 
