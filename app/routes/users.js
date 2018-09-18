@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const chalk = require('chalk');
+const secret = require('../utils/constant');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
-const { dueSortby } = require('../utils/utils');
+const { dueSortby, validateAuth } = require('../utils/utils');
 
  /**
  * @api {get} /user/:uid 获取user信息
@@ -45,8 +47,14 @@ exports.login = function(res, req) {
       errCallback(err, res);
     }
     if (user.authenticate(password)) {
+      let token = jwt.sign({
+        _id: user._id
+      }, secret, {
+        expiresIn: '10h'
+      })
       cb._id = user._id;
       cb.success = true;
+      cb.message = token;
       res.send(cb);
     } else {
       cb.success = false;
@@ -103,7 +111,9 @@ exports.changeUser = function(req, res) {
   let { uid } = req.params;
   let { password, email, age, name }
   let compose = {};
+  let token = req.header.jwt;
 
+  validateAuth(token, uid, res);
   if (password) {
     compose.password = password;
   }
@@ -153,6 +163,9 @@ exports.updateContent = function(req, res) {
   ];
   let compose = {}
   let after = {}
+  let token = req.header.jwt;
+
+  validateAuth(token, uid, res);
   
   if (!traget || targetMap.indexOf(traget) < 0) {
     errCallback('5010', res);

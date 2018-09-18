@@ -34,8 +34,10 @@ module.exports = function(app) {
     app.get('/comments/:aid', comment.getComments);
     // post comment
     app.post('/comments/:aid', comment.postComment);
+    // change comment
+    app.put('/comments/:cid', comment.changeComment);
     // write reply
-    app.put('/comments/reply/:cid', comment.putReply);
+    app.put('/comments/reply/:cid', comment.writeReply);
     
     // LADS
     // read all lads

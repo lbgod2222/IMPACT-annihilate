@@ -16,13 +16,8 @@ const CommentSchema = new Schema({
   content: String,
   replies: [
     {
-      // replay only for logined user
-      name: '',
-      content: String,
-      createdTime: {
-        type: Date,
-        default: Date.now()
-      }
+      type: Schema.Types.ObjectId,
+      ref: 'comment'
     }
   ],
   createdTime: {

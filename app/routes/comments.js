@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const Comment = require('../models/comments');
 const Article = require('../models/article');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
-const { dueSortby } = require('../utils/utils');
+const { dueSortby, validateAuth } = require('../utils/utils');
 
 /**
  * @apiDefine Pagination
@@ -13,7 +13,7 @@ const { dueSortby } = require('../utils/utils');
  * @apiParam {String} sortBy (分页) 请求的排序方式。
  */
 
- /**
+/**
  * @apiError
  * (Quicklad) 5001 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
  * (Quicklad) 5002 Quick 的颜色属性应该在列表中选择('red', 'purple', 'green', 'black', 'blue', 'yellow')(quicklad color should be on the list) 
@@ -74,11 +74,14 @@ exports.getComments = function(req, res) {
 exports.postComment = function(req, res) {
   let request;
   let aid;
-  console.log(chalk.green('WRITING COMMENTS'));
+  let token = req.header.jwt
   request = req.body;
   request._id = new mongoose.Types.ObjectId();
   aid = req.params.aid;
   let comment = new Comment(request)
+  if (request.creator) {
+    validateAuth(token, request.creator, res);
+  }
   comment.save(function(err) {
     if (err) {
       errCallback(err, res);
@@ -97,10 +100,11 @@ exports.postComment = function(req, res) {
 
 
 /**
- * @api {put} /comments/reply/:cid 修改评论
+ * @api {put} /comments/:cid 修改评论
  * @apiName putReply
  * @apiGroup Comment
  * @apiParam {ObjectId} cid 目标评论的ObjectId
+ * @apiParam {ObjectId} uid 目标评论的UID
  * @apiParam {String} content 回复内容
  * 
  * @apiError (Error) 5001 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
@@ -108,10 +112,14 @@ exports.postComment = function(req, res) {
  * @apiSuccess (Success) 3002 修改评论成功
  */
 exports.putReply = function(req, res) {
-  let request;
   let cid = req.params.cid;
+  let uid = req.body.uid;
   let content = req.query.content;
+  let token = req.header.jwt;
   
+  if (uid) {
+    validateAuth(token, uid, res);
+  }
   let compose = {'lastModified': Date.now()};
   if (content) {
     compose.content = content
@@ -124,3 +132,42 @@ exports.putReply = function(req, res) {
     postSuccessCallback('change comment success', res);
   });
 }
+
+/**
+ * @api {post} /comments/reply/:cid 修改评论
+ * @apiName putReply
+ * @apiGroup Comment
+ * @apiParam {ObjectId} cid 目标评论的ObjectId
+ * @apiParam {ObjectId} uid 目标评论的UID
+ * @apiParam {String} content 回复内容
+ * 
+ * @apiError (Error) 5001 内容长度应小于225并大于1(quicklad content should less than 225 chars & more than 1)
+ * 
+ * @apiSuccess (Success) 3010 发布评论回复成功
+ */
+
+let { cid } = req.params;
+let { uid, content } = req.body;
+let token = req.header.jwt;
+let request = {};
+
+request.creator = uid;
+request.content = content;
+validateAuth(token, uid, res);
+request._id = new mongoose.Types.ObjectId();
+let comment = new Comment(request);
+
+comment.save(function(err) {
+  if (err) {
+    errCallback(err, res);
+    return
+  } else {
+    Comment.findByIdAndUpdate(cid, {$push: {replies: req.body._id}}, function (err, com) {
+      if (err) {
+        errCallback(err);
+        return
+      }
+    })
+    postSuccessCallback('post reply success', res);
+  }
+})

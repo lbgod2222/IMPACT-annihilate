@@ -136,7 +136,10 @@ exports.article = function(req, res) {
  */
 exports.writeArticle = function(req, res) {
   let request;
+  let token = req.header.jwt;
   request = req.body;
+
+  validateAuth(token, request.author, res);
   if (req.body.tags) {
     request.meta = {};
     request.meta.tags = req.body.tags.split(',');
@@ -156,12 +159,12 @@ exports.writeArticle = function(req, res) {
  * @api {put} /article/:aid 修改article内容
  * @apiName changeArticle
  * @apiGroup Article
- * @apiUse Pagination
  * 
  * @apiParam {String} title article的标题部分
  * @apiParam {String} content article的内容
+ * @apiParam {String} uid article作者的UID
  * @apiParam {Date} lastModified article上次修改时间
- * @apiParam {String} tags article上次修改时间
+ * @apiParam {String} tags article标签
  * 
  * @apiError (Error) 5004 article标题长度应小于50且大于1
  * @apiError (Error) 5005 article内容长度应小于31000且大于1
@@ -170,9 +173,10 @@ exports.writeArticle = function(req, res) {
  */
 
  exports.changeArticle = function(req, res) {
-  let { title, content, tags } = req.body;
+  let { title, content, tags, uid } = req.body;
   let { aid } = req.params;
   let compose = {'lastModified': Date.now()}
+  let token = req.header.jwt
   if (title) {
     compose.title = title;
   }
@@ -183,6 +187,7 @@ exports.writeArticle = function(req, res) {
     compose.tags = tags;
   }
   
+  validateAuth(token, uid, res);
   Article.findOneAndUpdate({'_id': aid}, compose, (err, cb) => {
     if (err) {
       errCallback(err, res);
