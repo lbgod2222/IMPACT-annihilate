@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./node_modules/.bin/cross-env NODE_ENV=development ./node_modules/.bin/nodemon app.js"
+    "start": "./node_modules/.bin/cross-env NODE_ENV=development ./node_modules/.bin/nodemon app.js",
+    "apidoc": "apidoc -i app/routes -o ../lbgod2222.github.io/apidoc/"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

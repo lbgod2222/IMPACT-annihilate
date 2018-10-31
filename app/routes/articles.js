@@ -64,7 +64,7 @@ exports.articleList = function(req, res) {
 }
 
  /**
- * @api {get} /articles/:uid 获取所有articles
+ * @api {get} /articles/:uid 获取某个用户下的所有articles
  * @apiName userArticleList
  * @apiGroup Article
  * @apiUse Pagination
@@ -156,7 +156,7 @@ exports.writeArticle = function(req, res) {
 }
 
  /**
- * @api {put} /article/:aid 修改article内容
+ * @api {put} /article/adjust/:aid 修改article内容
  * @apiName changeArticle
  * @apiGroup Article
  * 

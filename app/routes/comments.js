@@ -93,7 +93,7 @@ exports.postComment = function(req, res) {
           return
         }
       })
-      postSuccessCallback('post comment success', res);
+      postSuccessCallback('3001', res);
     }
   })
 }
@@ -129,7 +129,7 @@ exports.changeComment = function(req, res) {
       errCallback(err, res);
       return
     }
-    postSuccessCallback('change comment success', res);
+    postSuccessCallback('3002', res);
   });
 }
 
