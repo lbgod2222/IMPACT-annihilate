@@ -101,7 +101,7 @@ exports.postComment = function(req, res) {
 
 /**
  * @api {put} /comments/:cid 修改评论
- * @apiName putReply
+ * @apiName changeComment
  * @apiGroup Comment
  * @apiParam {ObjectId} cid 目标评论的ObjectId
  * @apiParam {ObjectId} uid 目标评论的UID
@@ -111,7 +111,7 @@ exports.postComment = function(req, res) {
  * 
  * @apiSuccess (Success) 3002 修改评论成功
  */
-exports.putReply = function(req, res) {
+exports.changeComment = function(req, res) {
   let cid = req.params.cid;
   let uid = req.body.uid;
   let content = req.query.content;
@@ -134,8 +134,8 @@ exports.putReply = function(req, res) {
 }
 
 /**
- * @api {post} /comments/reply/:cid 修改评论
- * @apiName putReply
+ * @api {post} /comments/reply/:cid 回复评论
+ * @apiName writeReply
  * @apiGroup Comment
  * @apiParam {ObjectId} cid 目标评论的ObjectId
  * @apiParam {ObjectId} uid 目标评论的UID
@@ -145,29 +145,31 @@ exports.putReply = function(req, res) {
  * 
  * @apiSuccess (Success) 3010 发布评论回复成功
  */
+exports.writeReply = function(req, res) {
 
-let { cid } = req.params;
-let { uid, content } = req.body;
-let token = req.header.jwt;
-let request = {};
-
-request.creator = uid;
-request.content = content;
-validateAuth(token, uid, res);
-request._id = new mongoose.Types.ObjectId();
-let comment = new Comment(request);
-
-comment.save(function(err) {
-  if (err) {
-    errCallback(err, res);
-    return
-  } else {
-    Comment.findByIdAndUpdate(cid, {$push: {replies: req.body._id}}, function (err, com) {
-      if (err) {
-        errCallback(err);
-        return
-      }
-    })
-    postSuccessCallback('post reply success', res);
-  }
-})
+  let { cid } = req.params;
+  let { uid, content } = req.body;
+  let token = req.header.jwt;
+  let request = {};
+  
+  request.creator = uid;
+  request.content = content;
+  validateAuth(token, uid, res);
+  request._id = new mongoose.Types.ObjectId();
+  let comment = new Comment(request);
+  
+  comment.save(function(err) {
+    if (err) {
+      errCallback(err, res);
+      return
+    } else {
+      Comment.findByIdAndUpdate(cid, {$push: {replies: req.body._id}}, function (err, com) {
+        if (err) {
+          errCallback(err);
+          return
+        }
+      })
+      postSuccessCallback('post reply success', res);
+    }
+  })
+}

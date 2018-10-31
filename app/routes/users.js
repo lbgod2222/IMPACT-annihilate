@@ -109,7 +109,7 @@ exports.createUser = function(req, res) {
  // TODO: whether do timely check when change status?
 exports.changeUser = function(req, res) {
   let { uid } = req.params;
-  let { password, email, age, name }
+  let { password, email, age, name } = req
   let compose = {};
   let token = req.header.jwt;
 
