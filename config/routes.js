@@ -26,18 +26,18 @@ module.exports = function(app) {
     app.get('/article/:aid', article.article);
     // post article
     app.post('/article', article.writeArticle);
-    // change article
-    app.put('/article/:aid', article.changeArticle);
+    // adjust article
+    app.put('/article/adjust/:aid', article.changeArticle);
 
     // COMMENTS
     // read comment
     app.get('/comments/:aid', comment.getComments);
     // post comment
-    app.post('/comments/:aid', comment.postComment);
-    // change comment
-    // app.put('/comments/:cid', comment.changeComment);
+    app.post('/comment', comment.postComment);
+    // adjust comment
+    app.put('/comments/:cid', comment.changeComment);
     // write reply
-    // app.put('/comments/reply/:cid', comment.writeReply);
+    app.put('/comments/reply/:cid', comment.writeReply);
     
     // LADS
     // read all lads
@@ -45,7 +45,7 @@ module.exports = function(app) {
     // read colored lads
     app.get('/lads/:color', quicklad.getColorLads);
     // post lads
-    app.post('/lads', quicklad.postLabs);
+    app.post('/lad', quicklad.postLabs);
     // change lads
     app.put('/lads/:id', quicklad.changeLad);
 
