@@ -69,38 +69,35 @@ UserSchema
 // validate reassign a function & require a boolean return
 
 UserSchema.path('name').validate(function (name) {
-  console.log('validate name')
   if (this.skipValidation()) return true;
   return name.length;
 }, 'Name cannot be blank');
 
 UserSchema.path('email').validate(function (email) {
-  console.log('validate email')
   if (this.skipValidation()) return true;
   return regs.email(email);
 }, '5008');
 
-UserSchema.path('email').validate(function (email, fn) {
-  console.log('validate email2')
+UserSchema.path('email').validate(function (email) {
   const User = mongoose.model('User');
-  if (this.skipValidation()) fn(true);
+  if (this.skipValidation()) return(true);
   
   // Check only when it is a new user or when email field is modified
   if (this.isNew || this.isModified('email')) {
     User.find({ email: email }).exec(function (err, users) {
-      fn(!err && users.length === 0);
+      if (!err && users.length === 0) {
+        return false
+      };
     });
-  } else fn(true);
+  } else return true;
 }, 'Email already exists');
 
 UserSchema.path('username').validate(function (username) {
-  console.log('validate username')
   if (this.skipValidation()) return true;
   return regs.username(username);
 }, '5006');
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
-  console.log('validate hashed')
   if (this.skipValidation()) return true;
   return hashed_password.length && this._password.length;
 }, 'Password cannot be blank');
@@ -111,15 +108,11 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
  */
 
 UserSchema.pre('save', function (next) {
-  console.log('pre step 0')
   if (!this.isNew) return next();
-  console.log('pre step 1')
   
   if (!validatePresenceOf(this.password) && !this.skipValidation()) {
-    console.log('pre step 2')
     next(new Error('Invalid password'));
   } else {
-    console.log('pre step 3')
     next();
   }
 });
@@ -162,11 +155,11 @@ UserSchema.methods = {
    * @api public
    */
 
-  encryptPassword: function (password) {
+  encryptPassword: function (password, salt) {
     if (!password) return '';
     try {
       return crypto
-        .createHmac('sha1', this.salt)
+        .createHmac('sha1', this.salt || salt)
         .update(password)
         .digest('hex');
     } catch (err) {

@@ -8,7 +8,7 @@ const ArticleSchema = new Schema({
   author: {
     type: Schema.Types.ObjectId,
     ref: 'user',
-    required: [true, 'quicklad need createdTime']
+    required: [true, 'quicklad need creator']
   },
   content: String,
   lastModified: {type: Date, default: Date.now()},

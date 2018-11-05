@@ -11,7 +11,7 @@ const quicklad = require('../app/routes/quicklads');
 module.exports = function(app) {
     // below are test for example
     // login user
-    app.put('/user/login', user.login)
+    app.get('/user/login', user.login)
     // post interfaces
     app.post('/user', user.createUser);
     // get interfaces

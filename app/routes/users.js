@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const chalk = require('chalk');
-const secret = require('../utils/constant');
+const { secret } = require('../utils/constant');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
 const { dueSortby, validateAuth } = require('../utils/utils');
 
@@ -38,15 +38,15 @@ exports.userInfo = function(req, res) {
  * @apiError (Error) 5007 密码错误
  */
 // TODO: errCallback 需要进一步操作
-exports.login = function(res, req) {
-  let { username, password } = req.body;
+exports.login = function(req, res) {
+  let { username, password } = req.query;
 
   User.find({'username': username}, (err, user) => {
     let cb = {};
     if (err) {
       errCallback(err, res);
     }
-    if (user.authenticate(password)) {
+    if (User.schema.methods.encryptPassword(password, user[0].salt) === user[0].hashed_password) {
       let token = jwt.sign({
         _id: user._id
       }, secret, {
@@ -55,10 +55,11 @@ exports.login = function(res, req) {
       cb._id = user._id;
       cb.success = true;
       cb.message = token;
-      res.send(cb);
+      getCallback(cb, res);
     } else {
       cb.success = false;
       cb.message = '5007'
+      errCallback(cb, res);
     }
   })
 }
