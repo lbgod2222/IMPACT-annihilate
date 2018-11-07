@@ -23,15 +23,24 @@ exports.dueSortby = (str) => {
 }
 
 // Hook for validate user authoratio
-exports.validateAuth = (str, uid, res) => {
+// @ 5010 'Illegal authorzation'
+// @ 5011 'out of date'
+// @ 5012 'jwt must be provided'
+exports.validateAuth = (str, uid, res, cb) => {
+  let now = Date.now();
+  let message;
 	jwt.verify(str, secret, (err, decoded) => {
-		if (err) {
-			errCallback(err.message, res);
-			return;
-		}
+    if (err) {
+      message = err;
+    }
 		if (!decoded || decoded._id !== uid) {
-			let message = 'Illegal authorzation'
-			errCallback(message, res);
-		}
+      let message = '5010'
+			// return errCallback(message, res);
+    }
+    // if (decoded.exp < now) {
+    //   let message = '5011'
+    //   // return errCallback(message, res);
+    // }
+    cb(message)
 	});
 }

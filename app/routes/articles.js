@@ -41,7 +41,6 @@ exports.articleList = function(req, res) {
     Article.count(queryData, function(err, num) {
       count = num;
     });
-    console.log(queryData);
   } else {
     Article.estimatedDocumentCount(function(err, num) {
       if (err) {
@@ -75,7 +74,11 @@ exports.userArticleList = function(req, res) {
   let count;
   let data;
 
+  let { offset, limit, sortBy } = req.query;
   let { uid } = req.params;
+  offset = Number(offset);
+  limit = Number(limit);
+
   Article.count({'author': uid}, (err, num) => {
     if (err) {
       errCallback(err, res);
@@ -135,11 +138,12 @@ exports.article = function(req, res) {
  * @apiSuccess (Success) 3005 article发布成功
  */
 exports.writeArticle = function(req, res) {
-  let request;
-  let token = req.header.jwt;
-  request = req.body;
+  let request = req.body;
+  let token = req.headers.jwt;
 
-  validateAuth(token, request.author, res);
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
   if (req.body.tags) {
     request.meta = {};
     request.meta.tags = req.body.tags.split(',');
@@ -148,10 +152,9 @@ exports.writeArticle = function(req, res) {
   let article = new Article(request);
   article.save(function(err) {
     if (err) {
-      errCallback(err, res);
-    } else {
-      postSuccessCallback('3005', res);
+      return errCallback(err, res);
     }
+    return postSuccessCallback('3005', res);
   });
 }
 
@@ -177,6 +180,11 @@ exports.writeArticle = function(req, res) {
   let { aid } = req.params;
   let compose = {'lastModified': Date.now()}
   let token = req.header.jwt
+  
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
+
   if (title) {
     compose.title = title;
   }
@@ -187,7 +195,6 @@ exports.writeArticle = function(req, res) {
     compose.tags = tags;
   }
   
-  validateAuth(token, uid, res);
   Article.findOneAndUpdate({'_id': aid}, compose, (err, cb) => {
     if (err) {
       errCallback(err, res);

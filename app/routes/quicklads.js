@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const Quicklad = require('../models/quicklad');
 const User = require('../models/user');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
-const { dueSortby, validateAuth } = require('../utils/utils');
+const { dueSortby } = require('../utils/utils');
 
 
 /**
@@ -68,7 +68,6 @@ exports.getColorLads = (req, res) => {
   let col = req.params.color;
   offset = Number(offset);
   limit = Number(limit);
-  console.log(offset, limit, sortBy, col);
 
   Quicklad.find({color: col}).
   skip(offset).
@@ -111,11 +110,13 @@ exports.getColorLads = (req, res) => {
  */
 exports.changeLad = function(req, res) {
   let token = req.header.jwt;
-  console.log(chalk.green('PUT LADS'));
   let lid = req.params.id;
   let { content, color, uid } = req.body
   
-  validateAuth(token, uid, res);
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
+
   let compose = {'lastModified': Date.now()}
   if (content) {
     compose.content = content
@@ -156,7 +157,10 @@ exports.postLabs = function(req, res) {
   request = req.body;
   request._id = new mongoose.Types.ObjectId();
 
-  validateAuth(token, creator, res);
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
+
   quicklad.save(function(err) {
     if (err) {
       errCallback(err, res);

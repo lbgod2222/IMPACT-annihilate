@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const Comment = require('../models/comments');
 const Article = require('../models/article');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
-const { dueSortby, validateAuth } = require('../utils/utils');
+const { dueSortby } = require('../utils/utils');
 
 /**
  * @apiDefine Pagination
@@ -80,7 +80,9 @@ exports.postComment = function(req, res) {
   aid = req.params.aid;
   let comment = new Comment(request)
   if (request.creator) {
-    validateAuth(token, request.creator, res);
+    if (req.errorInject) {
+      return errCallback(req.errorInject, res);
+    }
   }
   comment.save(function(err) {
     if (err) {
@@ -118,7 +120,9 @@ exports.changeComment = function(req, res) {
   let token = req.header.jwt;
   
   if (uid) {
-    validateAuth(token, uid, res);
+    if (req.errorInject) {
+      return errCallback(req.errorInject, res);
+    }
   }
   let compose = {'lastModified': Date.now()};
   if (content) {
@@ -154,9 +158,12 @@ exports.writeReply = function(req, res) {
   
   request.creator = uid;
   request.content = content;
-  validateAuth(token, uid, res);
   request._id = new mongoose.Types.ObjectId();
   let comment = new Comment(request);
+
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
   
   comment.save(function(err) {
     if (err) {

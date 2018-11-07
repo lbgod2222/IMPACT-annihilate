@@ -7,19 +7,23 @@ const user = require('../app/routes/users');
 const article = require('../app/routes/articles');
 const comment = require('../app/routes/comments');
 const quicklad = require('../app/routes/quicklads');
+const { authPost } = require('../app/middlewares/authPost');
 
 module.exports = function(app) {
+    app.use(authPost);
     // below are test for example
     // login user
-    app.get('/user/login', user.login)
+    app.get('/user/login', user.login);
     // post interfaces
     app.post('/user', user.createUser);
     // get interfaces
     app.get('/user/:uid', user.userInfo);
+    // change user info
+    app.put('/user/:uid', user.changeUser);
 
     // ARTICLE
     // read somebody's article list
-    app.get('articles/:uid', article.userArticleList);
+    app.get('/articles/:uid', article.userArticleList);
     // read article list
     app.get('/articles', article.articleList);
     // read article detail
@@ -62,7 +66,6 @@ module.exports = function(app) {
         res.locals.error = req.app.get('env') === 'development' ? err : {};
 
         // render the error page
-        // console.log(res);
         console.log(chalk.cyan(err, '---upper is error'));
         res.status(err.status || 500);
         res.send('error');

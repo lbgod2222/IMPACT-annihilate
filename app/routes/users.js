@@ -5,7 +5,7 @@ const User = require('../models/user');
 const chalk = require('chalk');
 const { secret } = require('../utils/constant');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
-const { dueSortby, validateAuth } = require('../utils/utils');
+const { dueSortby } = require('../utils/utils');
 
  /**
  * @api {get} /user/:uid 获取user信息
@@ -15,9 +15,9 @@ const { dueSortby, validateAuth } = require('../utils/utils');
  * @apiParam {ObjectId} uid user的ID
  */
 exports.userInfo = function(req, res) {
-  let { uid } = this.params;
+  let { uid } = req.params;
 
-  User.find({'_id': uid}, (err, user) => {
+  User.findOne({'_id': uid}, (err, user) => {
     if (err) {
       errCallback(err, res);
     }
@@ -41,19 +41,18 @@ exports.userInfo = function(req, res) {
 exports.login = function(req, res) {
   let { username, password } = req.query;
 
-  User.find({'username': username}, (err, user) => {
+  User.findOne({'username': username}, (err, user) => {
     let cb = {};
     if (err) {
       errCallback(err, res);
     }
-    if (User.schema.methods.encryptPassword(password, user[0].salt) === user[0].hashed_password) {
+    if (User.schema.methods.encryptPassword(password, user.salt) === user.hashed_password) {
       let token = jwt.sign({
         _id: user._id
       }, secret, {
         expiresIn: '10h'
       })
       cb._id = user._id;
-      cb.success = true;
       cb.message = token;
       getCallback(cb, res);
     } else {
@@ -109,12 +108,15 @@ exports.createUser = function(req, res) {
 
  // TODO: whether do timely check when change status?
 exports.changeUser = function(req, res) {
+  let token = req.headers.jwt;
   let { uid } = req.params;
-  let { password, email, age, name } = req
+  let { password, email, age, name } = req.query
   let compose = {};
-  let token = req.header.jwt;
 
-  validateAuth(token, uid, res);
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
+  
   if (password) {
     compose.password = password;
   }
@@ -166,7 +168,9 @@ exports.updateContent = function(req, res) {
   let after = {}
   let token = req.header.jwt;
 
-  validateAuth(token, uid, res);
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
   
   if (!traget || targetMap.indexOf(traget) < 0) {
     errCallback('5010', res);
