@@ -37,11 +37,11 @@ module.exports = function(app) {
     // read comment
     app.get('/comments/:aid', comment.getComments);
     // post comment
-    app.post('/comment', comment.postComment);
+    app.post('/comment/:aid', comment.postComment);
     // adjust comment
     app.put('/comments/:cid', comment.changeComment);
     // write reply
-    app.put('/comments/reply/:cid', comment.writeReply);
+    app.post('/comments/reply/:cid', comment.writeReply);
     
     // LADS
     // read all lads

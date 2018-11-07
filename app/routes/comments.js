@@ -44,10 +44,10 @@ exports.getComments = function(req, res) {
   });
   offset = Number(offset);
   limit = Number(limit);
-  Article.find({_id: aid}).
+  Comment.find({aid: aid}).
   populate({
-    path: 'comments',
-    // model: 'comment',
+    path: 'replies',
+    model: 'comment',
     options: {limit: limit}
   }).
   exec((err, comment) => {
@@ -61,7 +61,7 @@ exports.getComments = function(req, res) {
  * @apiName postComment
  * @apiGroup Comment
  * @apiParam {ObjectId} aid 目标文章的ObjectId
- * @apiParam {ObjectId} content 目标文章的ObjectId
+ * @apiParam {ObjectId} content content 内容
  * @apiParam {Date} createdTime comment创建时间
  * @apiParam {String} tempNick comment显示昵称(未登录情况下)
  * @apiParam {ObjectId} creator comment创造者的ID(登录情况下)
@@ -78,6 +78,7 @@ exports.postComment = function(req, res) {
   request = req.body;
   request._id = new mongoose.Types.ObjectId();
   aid = req.params.aid;
+  request.aid = aid
   let comment = new Comment(request)
   if (request.creator) {
     if (req.errorInject) {
@@ -170,13 +171,13 @@ exports.writeReply = function(req, res) {
       errCallback(err, res);
       return
     } else {
-      Comment.findByIdAndUpdate(cid, {$push: {replies: req.body._id}}, function (err, com) {
+      Comment.findByIdAndUpdate(cid, {$push: {replies: request._id}}, function (err, com) {
         if (err) {
           errCallback(err);
           return
         }
       })
-      postSuccessCallback('post reply success', res);
+      postSuccessCallback('3010', res);
     }
   })
 }

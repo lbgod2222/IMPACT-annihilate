@@ -110,6 +110,7 @@ exports.getColorLads = (req, res) => {
  */
 exports.changeLad = function(req, res) {
   let token = req.header.jwt;
+  console.log(chalk.green('PUT LADS'));
   let lid = req.params.id;
   let { content, color, uid } = req.body
   
@@ -151,10 +152,9 @@ exports.changeLad = function(req, res) {
  * @apiSuccess (Success) 3003 Quicklad 发布成功 
  */
 exports.postLabs = function(req, res) {
-  let request;
+  let request = req.body;
   let token = req.header.jwt;
   let quicklad = new Quicklad(request);
-  request = req.body;
   request._id = new mongoose.Types.ObjectId();
 
   if (req.errorInject) {

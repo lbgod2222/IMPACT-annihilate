@@ -27,7 +27,7 @@ quickladSchema.path('content').validate((v) => {
 
 quickladSchema.path('color').validate((v) => {
   let list = ['red', 'purple', 'green', 'black', 'blue', 'yellow']
-  if (list[v] === undefined) {
+  if (list.findIndex(e => {return e === v}) < 0) {
     throw new Error('5002');
   }
   return true;

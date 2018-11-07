@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
   // DBref to article collection
-  article: {
+  aid: {
     type: Schema.Types.ObjectId,
     ref: 'article'
   },
