@@ -8,8 +8,15 @@ const join = require('path').join;
 const logger = require('morgan');
 const config = require('./config');
 const models = join(__dirname ,'app/models');
+const mailer = require('./app/utils/mailer');
 
 const app = express();
+
+mailer({
+  to: 'lbgod2222@163.com',
+  subject: 'SUBJECT',
+  html: '<h1>H1</h1><button>Verify This Email</button>'
+});
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));

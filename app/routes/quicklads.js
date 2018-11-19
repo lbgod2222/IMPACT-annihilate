@@ -110,7 +110,6 @@ exports.getColorLads = (req, res) => {
  */
 exports.changeLad = function(req, res) {
   let token = req.header.jwt;
-  console.log(chalk.green('PUT LADS'));
   let lid = req.params.id;
   let { content, color, uid } = req.body
   

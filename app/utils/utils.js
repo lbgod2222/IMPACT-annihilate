@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { errCallback } = require('../utils/unitcb');
 const { secret } = require('../utils/constant');
 
 // Due with sort by params
@@ -26,6 +25,7 @@ exports.dueSortby = (str) => {
 // @ 5010 'Illegal authorzation'
 // @ 5011 'out of date'
 // @ 5012 'jwt must be provided'
+// !NOW IS NOT IN USE, CAUSE WE HAVE A MIDDLEWARE WORKS THE SAME
 exports.validateAuth = (str, uid, res, cb) => {
   let now = Date.now();
   let message;
