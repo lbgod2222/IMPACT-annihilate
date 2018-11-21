@@ -1,6 +1,7 @@
-const Mail = require('../models/article');
+const Mail = require('../models/mail');
 const { errCallback, postSuccessCallback } = require('../utils/unitcb');
 const mailer = require('../utils/mailer');
+const Crypto = require('crypto');
 
  /**
  * @api {get} /mailValid/:address 向目标邮箱发送邮件
@@ -13,7 +14,7 @@ const mailer = require('../utils/mailer');
  */
 
 exports.mailValid = function(req, res) {
-  let address = req.params;
+  let { address } = req.query;
   let validCode;
   Crypto.randomBytes(20, (err, buf) => {
     validCode = buf.toString('hex');
@@ -27,20 +28,38 @@ exports.mailValid = function(req, res) {
       `
     }, (err, info) => {
       if (err) {
-        return errCallback(err, res);
+        errCallback(err, res);
+        return
       }
-      let mail = new Mail({
-        email: address,
-        authCode: validCode,
-        expire: Date.now
-      });
-      mail.save(err => {
-        if (err) {
-          errCallback(err, res);
-          return;
+      // before check dump
+      Mail.findOne({'email': address}, (err, mail) => {
+        if (mail === null) {
+          let mail = new Mail({
+            email: address,
+            authCode: validCode,
+            expire: Date.now() + 360000
+          });
+          mail.save(err => {
+            console.log('shit out');
+            if (err) {
+              errCallback(err, res);
+              return;
+            }
+            return postSuccessCallback('3011', res);
+          })
         }
-        return postSuccessCallback('3011', res);
-      })
+        let mailUpdate = {
+          expire: Date.now() + 360000,
+          authCode: validCode
+        }
+        Mail.findOneAndUpdate({'email': address}, mailUpdate, (err, cb) => {
+          if (err) {
+            errCallback(err, res);
+            return
+          }
+          return postSuccessCallback('3011', res);
+        });
+      });
     });
   });
 };

@@ -17,5 +17,5 @@ const MailCheck = new Schema({
   }
 });
 
-const mail = mongoose.model('MailCheck', MailCheck);
+const mail = mongoose.model('mail', MailCheck);
 module.exports = mail;

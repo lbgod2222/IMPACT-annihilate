@@ -7,6 +7,7 @@ const user = require('../app/routes/users');
 const article = require('../app/routes/articles');
 const comment = require('../app/routes/comments');
 const quicklad = require('../app/routes/quicklads');
+const mail = require('../app/routes/mails');
 const { authPost } = require('../app/middlewares/authPost');
 
 module.exports = function(app) {
@@ -53,7 +54,11 @@ module.exports = function(app) {
   // change lads
   app.put('/lads/:id', quicklad.changeLad);
 
-  // COMMON API
+  // MAIL
+  // send valid mail & store in db
+  app.get('/mailValid', mail.mailValid);
+  // valid code
+  app.get('/checkValid', mail.checkValid);
   
   // 404
   // catch 404 and forward to error handler
