@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-const Comment = require('../models/comments');
+const Comment = require('../models/comment');
 const Article = require('../models/article');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
 const { dueSortby } = require('../utils/utils');
