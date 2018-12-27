@@ -34,6 +34,7 @@ exports.getComments = function(req, res) {
   let { offset, limit, sortBy } = req.query;
   let { aid } = req.params
   
+  console.log('get comments', aid, count)
   // Get Total count
   Comment.estimatedDocumentCount(function(err, num) {
     if (err) {
@@ -47,10 +48,14 @@ exports.getComments = function(req, res) {
   Comment.find({aid: aid}).
   populate({
     path: 'replies',
-    model: 'comment',
+    model: Comment,
     options: {limit: limit}
   }).
   exec((err, comment) => {
+    if (err) {
+      console.log(err)
+    }
+    console.log(comment)
     data = comment;
     getCountCallback(data, count, res);
   });

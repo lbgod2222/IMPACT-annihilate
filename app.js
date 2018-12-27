@@ -12,17 +12,6 @@ const mailer = require('./app/utils/mailer');
 
 const app = express();
 
-// mailer({
-//   to: 'lbgod2222@163.com',
-//   subject: 'IMPACT VARIFY MAIL',
-//   html: '<h1>H1</h1><button>Verify This Email</button>'
-// }, (err, info) => {
-//   if (err) {
-//     console.log(err)
-//   }
-//   console.log(info)
-// });
-
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.json());

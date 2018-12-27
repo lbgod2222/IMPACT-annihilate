@@ -53,6 +53,8 @@ module.exports = function(app) {
   app.post('/lad', quicklad.postLabs);
   // change lads
   app.put('/lads/:id', quicklad.changeLad);
+  // search lads content
+  app.get('/lads/search', quicklad.searchLad);
 
   // MAIL
   // send valid mail & store in db

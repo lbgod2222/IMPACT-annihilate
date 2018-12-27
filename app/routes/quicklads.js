@@ -42,6 +42,10 @@ exports.getAllLads = function(req, res) {
   offset = Number(offset);
   limit = Number(limit);
   Quicklad.find({}).
+  populate({
+    path: 'creator',
+    model: User
+  }).
   skip(offset).
   limit(limit).
   sort(dueSortby(sortBy)).
@@ -93,6 +97,35 @@ exports.getColorLads = (req, res) => {
     data = lads;
     getCountCallback(data, count, res);
   });
+}
+
+/**
+ * @api {get} /lads/search/ 根据字段搜索所有内容
+ * @apiName searchLad
+ * @apiGroup Quicklad
+ */
+
+exports.searchLad = (req, res) => {
+  let { meta, offset, limit, sortBy } = req.query;
+  console.log('meta:', meta, 'offset:', offset, limit, sortBy);
+  offset = Number(offset);
+  limit = Number(limit);
+  Quicklad.find({
+    $text: meta
+  }).
+  skip(offset).
+  limit(limit).
+  sort(dueSortby(sortBy)).
+  exec((err, results) => {
+    if (err) {
+      console.log(chalk.cyan(err));
+      errCallback(err, res);
+      return
+    }
+    data = results
+    console.log(chalk.cyan(results));
+    getCountCallback(data, count, res);
+  })
 }
 
 /**

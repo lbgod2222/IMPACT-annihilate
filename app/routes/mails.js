@@ -65,7 +65,7 @@ exports.mailValid = function(req, res) {
 };
 
  /**
- * @api {get} /checkValid 向目标邮箱发送邮件
+ * @api {get} /checkValid 校验验证码并且清楚缓存邮箱对
  * @apiName checkValid
  * @apiGroup Mail
  * 
