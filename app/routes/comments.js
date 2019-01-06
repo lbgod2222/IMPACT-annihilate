@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 const Comment = require('../models/comment');
+const User = require('../models/user');
 const Article = require('../models/article');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
 const { dueSortby } = require('../utils/utils');
@@ -50,6 +51,11 @@ exports.getComments = function(req, res) {
     path: 'replies',
     model: Comment,
     options: {limit: limit}
+  }).
+  populate({
+    path: 'creator',
+    model: User
+    // options: {limit: limit}
   }).
   exec((err, comment) => {
     if (err) {
