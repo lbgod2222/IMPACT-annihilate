@@ -33,6 +33,8 @@ module.exports = function(app) {
   app.post('/article', article.writeArticle);
   // adjust article
   app.put('/article/adjust/:aid', article.changeArticle);
+  // vote article
+  app.put('/article/vote/:aid', article.voteArticle);
 
   // COMMENTS
   // read comment

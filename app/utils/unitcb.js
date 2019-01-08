@@ -1,4 +1,5 @@
 // callback constants
+// 5010 for need more params
 const _errCB = {
 	message: '',
 	success: false
@@ -39,5 +40,11 @@ exports.getCountCallback = (data, count, res) => {
 exports.postSuccessCallback = (msg, res) => {
 	let response = _successInfoCB;
 	response.message = msg;
+	res.send(response);
+}
+
+exports.needForParams = (res) => {
+	let response = _errCB;
+	response.message = 5010;
 	res.send(response);
 }

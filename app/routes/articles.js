@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 const Article = require('../models/article');
-const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
+const { errCallback, getCallback, getCountCallback, postSuccessCallback, needForParams } = require('../utils/unitcb');
 const { dueSortby } = require('../utils/utils');
 
 /**
@@ -129,7 +129,7 @@ exports.article = function(req, res) {
  * @apiParam {ObjectId} author (可选) article的发布者
  * @apiParam {String} content article的内容
  * @apiParam {Date} lastModified article上次修改时间
- * @apiParam {String} tags article上次修改时间
+ * @apiParam {String} tags article的tag内容
  * @apiParam {ObjectId} seed (可选)article诞生自哪个种子
  * 
  * @apiError (Error) 5004 article标题长度应小于50且大于1
@@ -165,7 +165,6 @@ exports.writeArticle = function(req, res) {
  * 
  * @apiParam {String} title article的标题部分
  * @apiParam {String} content article的内容
- * @apiParam {String} uid article作者的UID
  * @apiParam {Date} lastModified article上次修改时间
  * @apiParam {String} tags article标签
  * 
@@ -176,7 +175,7 @@ exports.writeArticle = function(req, res) {
  */
 
  exports.changeArticle = function(req, res) {
-  let { title, content, tags, uid } = req.body;
+  let { title, content, tags } = req.body;
   let { aid } = req.params;
   let compose = {'lastModified': Date.now()}
   let token = req.header.jwt
@@ -202,4 +201,59 @@ exports.writeArticle = function(req, res) {
     }
     postSuccessCallback('3006', res);
   })
+}
+
+ /**
+ * @api {put} /article/vote/:aid 给article投票
+ * @apiName voteArticle
+ * @apiGroup Article
+ * 
+ * @apiParam {String} aid article的ID
+ * 
+ * @apiSuccess (Success) 3006 article修改成功 实质与修改article相同
+ */
+
+exports.voteArticle = function(req, res) {
+  let { aid } = req.params;
+  let vote;
+  // necessary params check
+  if (!aid) {
+    needForParams(res);
+    return
+  }
+
+  if (req.errorInject) {
+    return errCallback(req.errorInject, res);
+  }
+
+  console.log('vote:', aid)
+  Article.findOne({'_id': aid}).exec((err, article) => {
+    if (err) {
+      return errCallback(err, res);
+    }
+    vote = article.meta.vote
+    Article.findByIdAndUpdate({'_id': aid}, {
+      meta: {
+        vote : vote + 1
+      }
+    }, (err, cb) => {
+      if (err) {
+        errCallback(err, res);
+        return
+      } 
+      postSuccessCallback('3006', res);
+    })
+  })
+
+  // Article.findByIdAndUpdate({'_id': aid}, {
+  //   meta: {
+  //     vote : meta.vote + 1
+  //   }
+  // }, (err, cb) => {
+  //    if (err) {
+  //     errCallback(err, res);
+  //     return
+  //    } 
+  //    postSuccessCallback('3006', res);
+  // })
 }
