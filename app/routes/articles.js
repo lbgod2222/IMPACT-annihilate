@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 const Article = require('../models/article');
+const Quicklad = require('../models/quicklad');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback, needForParams } = require('../utils/unitcb');
 const { dueSortby } = require('../utils/utils');
 
@@ -109,6 +110,10 @@ exports.article = function(req, res) {
   let data;
   let { aid } = req.params;
   Article.find({_id: aid}).
+  populate({
+    path: 'seed',
+    model: Quicklad
+  }).
   exec((err, article) => {
     if (err) {
       errCallback(err, res);
@@ -244,16 +249,4 @@ exports.voteArticle = function(req, res) {
       postSuccessCallback('3006', res);
     })
   })
-
-  // Article.findByIdAndUpdate({'_id': aid}, {
-  //   meta: {
-  //     vote : meta.vote + 1
-  //   }
-  // }, (err, cb) => {
-  //    if (err) {
-  //     errCallback(err, res);
-  //     return
-  //    } 
-  //    postSuccessCallback('3006', res);
-  // })
 }
