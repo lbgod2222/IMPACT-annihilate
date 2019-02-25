@@ -17,6 +17,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// set Access-Control-Allow-Origin
+app.all('*', function(req,  res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  next();
+})
 
 // bootstrap models for mongeese
 fs.readdirSync(models)
