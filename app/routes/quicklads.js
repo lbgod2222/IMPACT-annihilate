@@ -186,8 +186,10 @@ exports.changeLad = function(req, res) {
 exports.postLabs = function(req, res) {
   let request = req.body;
   let token = req.header.jwt;
+  let requestId = new mongoose.Types.ObjectId();
+  request._id = requestId;
   let quicklad = new Quicklad(request);
-  request._id = new mongoose.Types.ObjectId();
+  // request._id = new mongoose.Types.ObjectId();
 
   if (req.errorInject) {
     return errCallback(req.errorInject, res);
@@ -199,9 +201,14 @@ exports.postLabs = function(req, res) {
       return
     } else {
       if (request.creator) {
-        User.findByIdAndUpdate(request.creator, {$push: {
-          'lads': request._id
-        }}, )
+        console.log(request.creator)
+        console.log(requestId)
+        User.findByIdAndUpdate(request.creator, {$push: {lads: requestId}}, (err, lad) => {
+          if (err) {
+            errCallback(err);
+            return
+          }
+        })
       }
       postSuccessCallback('3003', res);
     }

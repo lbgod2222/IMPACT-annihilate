@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Comment = require('../models/comment');
+const Quicklad = require('../models/quicklad');
+const Article = require('../models/article');
 const chalk = require('chalk');
 const { secret } = require('../utils/constant');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback } = require('../utils/unitcb');
@@ -17,7 +20,16 @@ const { dueSortby } = require('../utils/utils');
 exports.userInfo = function(req, res) {
   let { uid } = req.params;
 
-  User.findOne({'_id': uid}, (err, user) => {
+  // User.findOne({'_id': uid}, (err, user) => {
+  //   if (err) {
+  //     errCallback(err, res);
+  //   }
+  //   getCallback(user, res);
+  // })
+  let populateQuery = 'lads articles';
+  User.findOne({'_id': uid})
+  .populate(populateQuery)
+  .exec((err, user) => {
     if (err) {
       errCallback(err, res);
     }

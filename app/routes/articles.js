@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const chalk = require('chalk');
 const Article = require('../models/article');
 const Quicklad = require('../models/quicklad');
+const User = require('../models/user');
 const { errCallback, getCallback, getCountCallback, postSuccessCallback, needForParams } = require('../utils/unitcb');
 const { dueSortby } = require('../utils/utils');
 
@@ -131,7 +132,7 @@ exports.article = function(req, res) {
  * @apiUse Pagination
  * 
  * @apiParam {String} title article的标题部分
- * @apiParam {ObjectId} author (可选) article的发布者
+ * @apiParam {ObjectId} author article的发布者
  * @apiParam {String} content article的内容
  * @apiParam {Date} lastModified article上次修改时间
  * @apiParam {String} tags article的tag内容
@@ -154,11 +155,19 @@ exports.writeArticle = function(req, res) {
     request.meta.tags = req.body.tags.split(',');
     delete request.tags;
   }
+  let requestId = new mongoose.Types.ObjectId();
+  request._id = requestId
   let article = new Article(request);
   article.save(function(err) {
     if (err) {
       return errCallback(err, res);
     }
+    User.findByIdAndUpdate(request.author, {$push: {articles: requestId}}, (err, art) => {
+      if (err) {
+        errCallback(err);
+        return
+      }
+    })
     return postSuccessCallback('3005', res);
   });
 }

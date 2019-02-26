@@ -32,9 +32,9 @@ const UserSchema = new Schema({
   salt: { type: String, default: '' },
   authToken: { type: String, default: '' },
   // articles area
-  articls: [{ type: Schema.Types.ObjectId, ref: 'article'}],
+  articles: [{ type: Schema.Types.ObjectId, ref: 'article'}],
   // caltivated area
-  cultivated: [{ type: Schema.Types.ObjectId, ref: 'article'}],
+  cultivated: [{ type: Schema.Types.ObjectId, ref: 'cultivated'}],
   // comments area
   comments: [{ type: Schema.Types.ObjectId, ref: 'comment' }],
   // lads area
