@@ -24,8 +24,8 @@ const oAuthTypes = [
 
 // TODO: rethink of this schema
 const UserSchema = new Schema({
-  name: { type: String, default: '', unique: true },
-  email: { type: String, default: '' },
+  name: { type: String, default: ''},
+  email: { type: String, default: '', unique: true },
   username: { type: String, default: '', unique: true },
   age: {type: Number, default: null},
   hashed_password: { type: String, default: '' },
@@ -68,10 +68,10 @@ UserSchema
 // 'path' means the base argument of one schema
 // validate reassign a function & require a boolean return
 
-UserSchema.path('name').validate(function (name) {
-  if (this.skipValidation()) return true;
-  return name.length;
-}, 'Name cannot be blank');
+// UserSchema.path('name').validate(function (name) {
+//   if (this.skipValidation()) return true;
+//   return name.length;
+// }, 'Name cannot be blank');
 
 UserSchema.path('email').validate(function (email) {
   if (this.skipValidation()) return true;

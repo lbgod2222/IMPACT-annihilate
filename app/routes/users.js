@@ -47,7 +47,7 @@ exports.userInfo = function(req, res) {
  * 
  * @apiSuccess (Success) UserId 验证成功
  * 
- * @apiError (Error) 5007 密码错误
+ * @apiError (Error) 5007 密码错误或账号不存在
  */
 // TODO: errCallback 需要进一步操作
 exports.login = function(req, res) {
@@ -58,7 +58,7 @@ exports.login = function(req, res) {
     if (err) {
       errCallback(err, res);
     }
-    if (User.schema.methods.encryptPassword(password, user.salt) === user.hashed_password) {
+    if (user && User.schema.methods.encryptPassword(password, user.salt) === user.hashed_password) {
       let token = jwt.sign({
         _id: user._id
       }, secret, {
@@ -82,23 +82,35 @@ exports.login = function(req, res) {
  * 
  * @apiParam {String} username user的登录用户名
  * @apiParam {String} password user的登录密码
+ * @apiParam {String} email user的验证邮箱
  * 
  * @apiSuccess (Success) 3007 注册账户成功
  * 
  * @apiError (Error) 5006 账户名不符合要求
  */
 exports.createUser = function(req, res) {
-  let request = req.body
-  request._id = new mongoose.Types.ObjectId();
-
-  let user = new User(request);
-  user.save(err => {
-    if (err) {
-      errCallback(err, res);
-      return;
-    }
-    postSuccessCallback('3007', res);
-  });
+  // adjust for payload
+  let str = [];
+  let finStr;
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
+  })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr);
+    console.log('come the payload content: ', JSON.parse(finStr))
+    request._id = new mongoose.Types.ObjectId();
+  
+    let user = new User(request);
+    user.save(err => {
+      if (err) {
+        errCallback(err, res);
+        return;
+      }
+      postSuccessCallback('3007', res);
+    });
+  })
 }
 
 /**

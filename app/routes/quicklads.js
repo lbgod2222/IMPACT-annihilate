@@ -184,33 +184,65 @@ exports.changeLad = function(req, res) {
  * @apiSuccess (Success) 3003 Quicklad 发布成功 
  */
 exports.postLabs = function(req, res) {
-  let request = req.body;
+  // let request = req.body;
   let token = req.header.jwt;
-  let requestId = new mongoose.Types.ObjectId();
-  request._id = requestId;
-  let quicklad = new Quicklad(request);
-  // request._id = new mongoose.Types.ObjectId();
-
-  if (req.errorInject) {
-    return errCallback(req.errorInject, res);
-  }
-
-  quicklad.save(function(err) {
-    if (err) {
-      errCallback(err, res);
-      return
-    } else {
-      if (request.creator) {
-        console.log(request.creator)
-        console.log(requestId)
-        User.findByIdAndUpdate(request.creator, {$push: {lads: requestId}}, (err, lad) => {
-          if (err) {
-            errCallback(err);
-            return
-          }
-        })
-      }
-      postSuccessCallback('3003', res);
-    }
+  let str = [];
+  let finStr;
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
   })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr);
+    let requestId = new mongoose.Types.ObjectId();
+    request._id = requestId;
+    let quicklad = new Quicklad(request);
+
+    if (req.errorInject) {
+      return errCallback(req.errorInject, res);
+    }
+
+    quicklad.save(function(err) {
+      if (err) {
+        errCallback(err, res);
+        return
+      } else {
+        if (request.creator) {
+          console.log(request.creator)
+          console.log(requestId)
+          User.findByIdAndUpdate(request.creator, {$push: {lads: requestId}}, (err, lad) => {
+            if (err) {
+              errCallback(err);
+              return
+            }
+          })
+        }
+        postSuccessCallback('3003', res);
+      }
+    })
+  })
+
+  // if (req.errorInject) {
+  //   return errCallback(req.errorInject, res);
+  // }
+
+  // quicklad.save(function(err) {
+  //   if (err) {
+  //     errCallback(err, res);
+  //     return
+  //   } else {
+  //     if (request.creator) {
+  //       console.log(request.creator)
+  //       console.log(requestId)
+  //       User.findByIdAndUpdate(request.creator, {$push: {lads: requestId}}, (err, lad) => {
+  //         if (err) {
+  //           errCallback(err);
+  //           return
+  //         }
+  //       })
+  //     }
+  //     postSuccessCallback('3003', res);
+  //   }
+  // })
 }

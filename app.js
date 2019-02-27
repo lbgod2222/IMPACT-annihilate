@@ -19,7 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 // set Access-Control-Allow-Origin
 app.all('*', function(req,  res, next) {
+  res.setHeader("Access-Control-Allow-Methods", "POST,GET");
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "x-requested-with,Content-Type");
   next();
 })
 

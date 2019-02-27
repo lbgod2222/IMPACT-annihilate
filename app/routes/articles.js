@@ -144,32 +144,58 @@ exports.article = function(req, res) {
  * @apiSuccess (Success) 3005 article发布成功
  */
 exports.writeArticle = function(req, res) {
-  let request = req.body;
+  // let request = req.body;
   let token = req.headers.jwt;
+  let str = [];
+  let finStr;
 
   if (req.errorInject) {
     return errCallback(req.errorInject, res);
   }
-  if (req.body.tags) {
-    request.meta = {};
-    request.meta.tags = req.body.tags.split(',');
-    delete request.tags;
-  }
-  let requestId = new mongoose.Types.ObjectId();
-  request._id = requestId
-  let article = new Article(request);
-  article.save(function(err) {
-    if (err) {
-      return errCallback(err, res);
+
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
+  })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr)
+    if (request.tags) {
+      request.meta = {};
+      request.meta.tags = request.tags.split(',');
+      delete request.tags;
     }
-    User.findByIdAndUpdate(request.author, {$push: {articles: requestId}}, (err, art) => {
+    let requestId = new mongoose.Types.ObjectId();
+    request._id = requestId
+    let article = new Article(request);
+    article.save(function(err) {
       if (err) {
-        errCallback(err);
-        return
+        return errCallback(err, res);
       }
-    })
-    return postSuccessCallback('3005', res);
-  });
+      User.findByIdAndUpdate(request.author, {$push: {articles: requestId}}, (err, art) => {
+        if (err) {
+          errCallback(err);
+          return
+        }
+      })
+      return postSuccessCallback('3005', res);
+    });
+  })
+  // let requestId = new mongoose.Types.ObjectId();
+  // request._id = requestId
+  // let article = new Article(request);
+  // article.save(function(err) {
+  //   if (err) {
+  //     return errCallback(err, res);
+  //   }
+  //   User.findByIdAndUpdate(request.author, {$push: {articles: requestId}}, (err, art) => {
+  //     if (err) {
+  //       errCallback(err);
+  //       return
+  //     }
+  //   })
+  //   return postSuccessCallback('3005', res);
+  // });
 }
 
  /**

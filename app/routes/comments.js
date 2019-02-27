@@ -86,30 +86,64 @@ exports.postComment = function(req, res) {
   let request;
   let aid;
   let token = req.header.jwt
-  request = req.body;
-  request._id = new mongoose.Types.ObjectId();
-  aid = req.params.aid;
-  request.aid = aid
-  let comment = new Comment(request)
-  if (request.creator) {
-    if (req.errorInject) {
-      return errCallback(req.errorInject, res);
-    }
-  }
-  comment.save(function(err) {
-    if (err) {
-      errCallback(err, res);
-      return
-    } else {
-      Article.findByIdAndUpdate(aid, {$push: {comments: request._id}}, function (err, com) {
-        if (err) {
-          errCallback(err);
-          return
-        }
-      })
-      postSuccessCallback('3001', res);
-    }
+  let str = [];
+  let finStr;
+
+  console.log(req)
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
   })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr);
+    request._id = new mongoose.Types.ObjectId();
+    aid = req.params.aid;
+    request.aid = aid
+    let comment = new Comment(request)
+    if (request.creator) {
+      if (req.errorInject) {
+        return errCallback(req.errorInject, res);
+      }
+    }
+    comment.save(function(err) {
+      if (err) {
+        errCallback(err, res);
+        return
+      } else {
+        Article.findByIdAndUpdate(aid, {$push: {comments: request._id}}, function (err, com) {
+          if (err) {
+            errCallback(err);
+            return
+          }
+        })
+        postSuccessCallback('3001', res);
+      }
+    })
+  })
+  // request._id = new mongoose.Types.ObjectId();
+  // aid = req.params.aid;
+  // request.aid = aid
+  // let comment = new Comment(request)
+  // if (request.creator) {
+  //   if (req.errorInject) {
+  //     return errCallback(req.errorInject, res);
+  //   }
+  // }
+  // comment.save(function(err) {
+  //   if (err) {
+  //     errCallback(err, res);
+  //     return
+  //   } else {
+  //     Article.findByIdAndUpdate(aid, {$push: {comments: request._id}}, function (err, com) {
+  //       if (err) {
+  //         errCallback(err);
+  //         return
+  //       }
+  //     })
+  //     postSuccessCallback('3001', res);
+  //   }
+  // })
 }
 
 
@@ -164,31 +198,64 @@ exports.changeComment = function(req, res) {
 exports.writeReply = function(req, res) {
 
   let { cid } = req.params;
-  let { uid, content } = req.body;
+  // let { uid, content } = req.body;
   let token = req.header.jwt;
-  let request = {};
+  let str = [];
+  let finStr;
   
-  request.creator = uid;
-  request.content = content;
-  request._id = new mongoose.Types.ObjectId();
-  let comment = new Comment(request);
-
-  if (req.errorInject) {
-    return errCallback(req.errorInject, res);
-  }
-  
-  comment.save(function(err) {
-    if (err) {
-      errCallback(err, res);
-      return
-    } else {
-      Comment.findByIdAndUpdate(cid, {$push: {replies: request._id}}, function (err, com) {
-        if (err) {
-          errCallback(err);
-          return
-        }
-      })
-      postSuccessCallback('3010', res);
-    }
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
   })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr);
+    let { uid, content } = request
+    request.creator = uid;
+    request.content = content;
+    request._id = new mongoose.Types.ObjectId();
+    let comment = new Comment(request);
+    
+    if (req.errorInject) {
+      return errCallback(req.errorInject, res);
+    }
+
+    comment.save(function(err) {
+      if (err) {
+        errCallback(err, res);
+        return
+      } else {
+        Comment.findByIdAndUpdate(cid, {$push: {replies: request._id}}, function (err, com) {
+          if (err) {
+            errCallback(err);
+            return
+          }
+        })
+        postSuccessCallback('3010', res);
+      }
+    })
+  })
+  // request.creator = uid;
+  // request.content = content;
+  // request._id = new mongoose.Types.ObjectId();
+  // let comment = new Comment(request);
+
+  // if (req.errorInject) {
+  //   return errCallback(req.errorInject, res);
+  // }
+  
+  // comment.save(function(err) {
+  //   if (err) {
+  //     errCallback(err, res);
+  //     return
+  //   } else {
+  //     Comment.findByIdAndUpdate(cid, {$push: {replies: request._id}}, function (err, com) {
+  //       if (err) {
+  //         errCallback(err);
+  //         return
+  //       }
+  //     })
+  //     postSuccessCallback('3010', res);
+  //   }
+  // })
 }
