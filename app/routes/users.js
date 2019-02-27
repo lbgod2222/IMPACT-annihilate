@@ -132,35 +132,75 @@ exports.createUser = function(req, res) {
 
  // TODO: whether do timely check when change status?
 exports.changeUser = function(req, res) {
+  // console.log('HEADERS:   ', req.headers)
   let token = req.headers.jwt;
   let { uid } = req.params;
-  let { password, email, age, name } = req.query
+  let str = [];
+  let finStr;
+  // let { password, email, age, name } = req.query
   let compose = {};
 
   if (req.errorInject) {
     return errCallback(req.errorInject, res);
   }
-  
-  if (password) {
-    compose.password = password;
-  }
-  if (name) {
-    compose.name = name;
-  }
-  if (email) {
-    compose.email = email;
-  }
-  if (age) {
-    compose.age = age;
-  }
 
-  User.findByIdAndUpdate(uid, compose, (err, cb) => {
-    if (err) {
-      errCallback(err, res);
-      return;
+  req.on('data', (content) => {
+    console.log('monite the data:', content)
+    str.push(content);
+  })
+  req.on('end', () => {
+    finStr = (Buffer.concat(str)).toString();
+    let request = JSON.parse(finStr)
+    let { password, email, age, name } = request
+    
+    if (password) {
+      compose.password = password;
     }
-    postSuccessCallback('3008', res);
-  });
+    if (name) {
+      compose.name = name;
+    }
+    if (email) {
+      compose.email = email;
+    }
+    if (age) {
+      compose.age = age;
+    }
+  
+    console.log('compose content:', compose)
+    User.findByIdAndUpdate(uid, compose, (err, cb) => {
+      if (err) {
+        errCallback(err, res);
+        return;
+      }
+      postSuccessCallback('3008', res);
+    });
+  })
+
+  // if (req.errorInject) {
+  //   return errCallback(req.errorInject, res);
+  // }
+  
+  // if (password) {
+  //   compose.password = password;
+  // }
+  // if (name) {
+  //   compose.name = name;
+  // }
+  // if (email) {
+  //   compose.email = email;
+  // }
+  // if (age) {
+  //   compose.age = age;
+  // }
+
+  // console.log('compose content:', compose)
+  // User.findByIdAndUpdate(uid, compose, (err, cb) => {
+  //   if (err) {
+  //     errCallback(err, res);
+  //     return;
+  //   }
+  //   postSuccessCallback('3008', res);
+  // });
 }
 
 /**
