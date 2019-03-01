@@ -26,7 +26,7 @@ quickladSchema.path('content').validate((v) => {
 }, 'fail at valid content');
 
 quickladSchema.path('color').validate((v) => {
-  let list = ['red', 'purple', 'green', 'black', 'blue', 'yellow']
+  let list = ['RED', 'PURPLE', 'GREEN', 'BLACK', 'BLUE', 'YELLOW']
   if (list.findIndex(e => {return e === v}) < 0) {
     throw new Error('5002');
   }

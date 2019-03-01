@@ -23,7 +23,7 @@ const { dueSortby } = require('../utils/utils');
  * @apiParam {String} tags article的标签
  */
 // more: now only accept $and query & all
-exports.articleList = function(req, res) {
+exports.articleList = async function(req, res) {
   let count;
   let data;
   let queryData = {};
@@ -40,11 +40,11 @@ exports.articleList = function(req, res) {
     queryData = {
       $and: obj
     }
-    Article.count(queryData, function(err, num) {
+    await Article.count(queryData, function(err, num) {
       count = num;
     });
   } else {
-    Article.estimatedDocumentCount(function(err, num) {
+    await Article.estimatedDocumentCount(function(err, num) {
       if (err) {
         errCallback(err, res);
         return
@@ -55,6 +55,10 @@ exports.articleList = function(req, res) {
   offset = Number(offset);
   limit = Number(limit);
   Article.find(queryData, ['_id', 'title', 'author', 'meta', 'lastModified']).
+  populate({
+    path: 'author',
+    model: User
+  }).
   skip(offset).
   limit(limit).
   sort(dueSortby(sortBy)).
@@ -72,7 +76,7 @@ exports.articleList = function(req, res) {
  * 
  * @apiParam {ObjectId} uid 发布者的ID
  */
-exports.userArticleList = function(req, res) {
+exports.userArticleList = async function(req, res) {
   let count;
   let data;
 
@@ -81,7 +85,7 @@ exports.userArticleList = function(req, res) {
   offset = Number(offset);
   limit = Number(limit);
 
-  Article.count({'author': uid}, (err, num) => {
+  await Article.count({'author': uid}, (err, num) => {
     if (err) {
       errCallback(err, res);
     }
@@ -120,7 +124,7 @@ exports.article = function(req, res) {
       errCallback(err, res);
       return
     }
-    data = article;
+    data = article[0];
     getCallback(data, res);
   })
 }
@@ -154,7 +158,6 @@ exports.writeArticle = function(req, res) {
   }
 
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
@@ -266,7 +269,6 @@ exports.voteArticle = function(req, res) {
     return errCallback(req.errorInject, res);
   }
 
-  console.log('vote:', aid)
   Article.findOne({'_id': aid}).exec((err, article) => {
     if (err) {
       return errCallback(err, res);

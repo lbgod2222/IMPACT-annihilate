@@ -40,7 +40,6 @@ exports.mailValid = function(req, res) {
             expire: Date.now() + 360000
           });
           mail.save(err => {
-            console.log('NEW BEE');
             if (err) {
               errCallback(err, res);
               return;
@@ -48,7 +47,6 @@ exports.mailValid = function(req, res) {
             return postSuccessCallback('3011', res);
           })
         } else {
-          console.log('OLD SCHOOL');
           let mailUpdate = {
             expire: Date.now() + 360000,
             authCode: validCode
@@ -81,9 +79,7 @@ exports.mailValid = function(req, res) {
 
 exports.checkValid = function(req, res) {
   let { address, authCode } = req.query;
-  console.log('address:', address, 'authco: ', authCode)
   Mail.findOne({'email': address}, (err, mail) => {
-    console.log('CB INFO: ', mail)
     if (err) {
       errCallback(err, res);
     }

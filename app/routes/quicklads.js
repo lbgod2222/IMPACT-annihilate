@@ -107,7 +107,6 @@ exports.getColorLads = (req, res) => {
 
 exports.searchLad = (req, res) => {
   let { meta, offset, limit, sortBy } = req.query;
-  console.log('meta:', meta, 'offset:', offset, limit, sortBy);
   offset = Number(offset);
   limit = Number(limit);
   Quicklad.find({
@@ -118,12 +117,10 @@ exports.searchLad = (req, res) => {
   sort(dueSortby(sortBy)).
   exec((err, results) => {
     if (err) {
-      console.log(chalk.cyan(err));
       errCallback(err, res);
-      return
+      return 
     }
     data = results
-    console.log(chalk.cyan(results));
     getCountCallback(data, count, res);
   })
 }
@@ -189,7 +186,6 @@ exports.postLabs = function(req, res) {
   let str = [];
   let finStr;
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
@@ -209,8 +205,6 @@ exports.postLabs = function(req, res) {
         return
       } else {
         if (request.creator) {
-          console.log(request.creator)
-          console.log(requestId)
           User.findByIdAndUpdate(request.creator, {$push: {lads: requestId}}, (err, lad) => {
             if (err) {
               errCallback(err);

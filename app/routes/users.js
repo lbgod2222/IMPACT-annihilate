@@ -93,13 +93,11 @@ exports.createUser = function(req, res) {
   let str = [];
   let finStr;
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
     finStr = (Buffer.concat(str)).toString();
     let request = JSON.parse(finStr);
-    console.log('come the payload content: ', JSON.parse(finStr))
     request._id = new mongoose.Types.ObjectId();
   
     let user = new User(request);
@@ -132,7 +130,6 @@ exports.createUser = function(req, res) {
 
  // TODO: whether do timely check when change status?
 exports.changeUser = function(req, res) {
-  // console.log('HEADERS:   ', req.headers)
   let token = req.headers.jwt;
   let { uid } = req.params;
   let str = [];
@@ -145,7 +142,6 @@ exports.changeUser = function(req, res) {
   }
 
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
@@ -166,7 +162,6 @@ exports.changeUser = function(req, res) {
       compose.age = age;
     }
   
-    console.log('compose content:', compose)
     User.findByIdAndUpdate(uid, compose, (err, cb) => {
       if (err) {
         errCallback(err, res);

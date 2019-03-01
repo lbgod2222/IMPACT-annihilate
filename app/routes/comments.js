@@ -29,39 +29,54 @@ const { dueSortby } = require('../utils/utils');
  * @apiUse Pagination
  * @apiParam {ObjectId} aid 目标文章的ObjectId
  */
-exports.getComments = function(req, res) {
+exports.getComments =  async function(req, res) {
   let count;
   let data;
   let { offset, limit, sortBy } = req.query;
   let { aid } = req.params
   
-  console.log('get comments', aid, count)
   // Get Total count
-  Comment.estimatedDocumentCount(function(err, num) {
+  // Comment.estimatedDocumentCount(function(err, num) {
+  //   if (err) {
+  //     errCallback(err, res);
+  //     return
+  //   }
+  //   count = num;
+  //   console.log(count)
+  // });
+  // get filtered count
+  await Comment.count({aid: aid}, (err, num) => {
     if (err) {
       errCallback(err, res);
       return
+    } else {
+      count = num;
     }
-    count = num;
-  });
+  })
   offset = Number(offset);
   limit = Number(limit);
   Comment.find({aid: aid}).
   populate({
     path: 'replies',
     model: Comment,
-    options: {limit: limit}
+    options: {limit: limit},
+    populate: {
+      path: 'creator',
+      model: User
+    }
   }).
   populate({
     path: 'creator',
     model: User
     // options: {limit: limit}
   }).
+  skip(offset).
+  limit(limit).
+  sort(dueSortby(sortBy)).
   exec((err, comment) => {
     if (err) {
       console.log(err)
     }
-    console.log(comment)
     data = comment;
     getCountCallback(data, count, res);
   });
@@ -89,9 +104,7 @@ exports.postComment = function(req, res) {
   let str = [];
   let finStr;
 
-  console.log(req)
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
@@ -196,7 +209,6 @@ exports.changeComment = function(req, res) {
  * @apiSuccess (Success) 3010 发布评论回复成功
  */
 exports.writeReply = function(req, res) {
-
   let { cid } = req.params;
   // let { uid, content } = req.body;
   let token = req.header.jwt;
@@ -204,7 +216,6 @@ exports.writeReply = function(req, res) {
   let finStr;
   
   req.on('data', (content) => {
-    console.log('monite the data:', content)
     str.push(content);
   })
   req.on('end', () => {
