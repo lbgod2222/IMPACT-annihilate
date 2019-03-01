@@ -115,6 +115,7 @@ exports.article = function(req, res) {
   let data;
   let { aid } = req.params;
   Article.find({_id: aid}).
+  select('author content lastModified meta title _id').
   populate({
     path: 'seed',
     model: Quicklad

@@ -28,6 +28,7 @@ exports.userInfo = function(req, res) {
   // })
   let populateQuery = 'lads articles';
   User.findOne({'_id': uid})
+  .select('_id age articles comments cultivated email lads messages name')
   .populate(populateQuery)
   .exec((err, user) => {
     if (err) {

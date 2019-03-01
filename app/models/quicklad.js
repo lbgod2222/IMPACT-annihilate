@@ -32,5 +32,8 @@ quickladSchema.path('color').validate((v) => {
   }
   return true;
 }, 'fail at valid color');
+
+// trying build index
+// quickladSchema.index({ content: "text"})
 const quicklad = mongoose.model('quicklad', quickladSchema);
 module.exports = quicklad

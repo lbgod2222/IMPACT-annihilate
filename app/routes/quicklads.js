@@ -74,8 +74,6 @@ exports.getColorLads = (req, res) => {
   limit = Number(limit);
 
   Quicklad.find({color: col}).
-  skip(offset).
-  limit(limit).
   sort(dueSortby(sortBy)).
   count((err, num) => {
     if (err) {
@@ -100,17 +98,35 @@ exports.getColorLads = (req, res) => {
 }
 
 /**
- * @api {get} /lads/search/ 根据字段搜索所有内容
+ * @api {get} /search 根据字段搜索所有内容
  * @apiName searchLad
  * @apiGroup Quicklad
+ * @apiUse Pagination
+ * @apiParam {String} meta 查询字段
  */
 
-exports.searchLad = (req, res) => {
+exports.searchLad = async (req, res) => {
+  let count;
   let { meta, offset, limit, sortBy } = req.query;
   offset = Number(offset);
   limit = Number(limit);
+  await Quicklad.find({
+    $text: {
+      $search: String(meta)
+    }
+  }, { "score": { "$meta": "textScore" } }).
+  sort(dueSortby(sortBy)).
+  count((err, num) => {
+    if (err) {
+      errCallback(err, res);
+      return
+		}
+		count = num;
+  });
   Quicklad.find({
-    $text: meta
+    $text: {
+      $search: meta
+    }
   }).
   skip(offset).
   limit(limit).
