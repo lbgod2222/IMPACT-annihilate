@@ -18,7 +18,7 @@ exports.mailValid = function(req, res) {
   let validCode;
   Crypto.randomBytes(20, (err, buf) => {
     validCode = buf.toString('hex');
-
+    console.log('foremost:')
     mailer({
       to: address,
       subject: 'Impact： 验证码',
@@ -27,12 +27,15 @@ exports.mailValid = function(req, res) {
       <strong>${validCode}<strong>
       `
     }, (err, info) => {
+      console.log('get in')
       if (err) {
         errCallback(err, res);
         return
       }
+      console.log('get in')
       // before check dump
       Mail.findOne({'email': address}, (err, mail) => {
+        console.log('get in 2 find func')
         if (mail === null) {
           let mail = new Mail({
             email: address,
@@ -40,6 +43,7 @@ exports.mailValid = function(req, res) {
             expire: Date.now() + 360000
           });
           mail.save(err => {
+            console.log('get in mail saved func')
             if (err) {
               errCallback(err, res);
               return;
@@ -47,11 +51,13 @@ exports.mailValid = function(req, res) {
             return postSuccessCallback('3011', res);
           })
         } else {
+          console.log('get in else func')
           let mailUpdate = {
             expire: Date.now() + 360000,
             authCode: validCode
           }
           Mail.findOneAndUpdate({'email': address}, mailUpdate, (err, cb) => {
+            console.log('get in find one func')
             if (err) {
               errCallback(err, res);
               return
