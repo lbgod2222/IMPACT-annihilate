@@ -21,6 +21,7 @@ module.exports = function(mail, cb) {
   console.log('get in mailer func')
   console.log('get in massage:', mail)
   mail = Object.assign(baseInfo, mail);
+  console.log('after mail:', mail)
   transporter.sendMail(mail, (err, info) => {
     console.log('may be error')
     cb(err, info)
