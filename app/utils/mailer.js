@@ -23,7 +23,7 @@ module.exports = function(mail, cb) {
   mail = Object.assign(baseInfo, mail);
   console.log('after mail:', mail)
   transporter.sendMail(mail, (err, info) => {
-    console.log('may be error')
+    console.log('may be error', err, '+++++info:', info)
     cb(err, info)
   });
 };
