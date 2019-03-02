@@ -27,12 +27,13 @@ exports.mailValid = function(req, res) {
       <strong>${validCode}<strong>
       `
     }, (err, info) => {
-      console.log('get in')
+      console.log('get in before')
       if (err) {
+        console.log('get in err before')
         errCallback(err, res);
         return
       }
-      console.log('get in')
+      console.log('get in after')
       // before check dump
       Mail.findOne({'email': address}, (err, mail) => {
         console.log('get in 2 find func')
