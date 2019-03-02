@@ -18,6 +18,8 @@ const transporter = nodemailer.createTransport(config);
 
 // info.response
 module.exports = function(mail, cb) {
+  console.log('get in mailer func')
+  console.log('get in massage:', mail)
   mail = Object.assign(baseInfo, mail);
   transporter.sendMail(mail, (err, info) => {
     cb(err, info)
