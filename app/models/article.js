@@ -7,7 +7,7 @@ const ArticleSchema = new Schema({
   title: String,
   author: {
     type: Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'User',
     required: [true, 'quicklad need creator']
   },
   content: String,
