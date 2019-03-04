@@ -91,16 +91,19 @@ exports.checkValid = function(req, res) {
     if (err) {
       errCallback(err, res);
     }
-    if (mail && mail.authCode === authCode) {
-      console.log('PLUS!')
-      Mail.deleteOne({'email': address}, (err, mail) => {
-        if (err) {
-          errCallback(err, res);
-        }
-        postSuccessCallback('3012', res);
-      });
+    if (mail) {
+      if (mail.authCode === authCode) {
+        Mail.deleteOne({'email': address}, (err, mail) => {
+          if (err) {
+            errCallback(err, res);
+          }
+          postSuccessCallback('3012', res);
+        });
+      } else {
+        errCallback('5013', res);
+      }
     } else {
-      errCallback('5013', res);
+      errCallback('5015', res);
     }
   });
 }

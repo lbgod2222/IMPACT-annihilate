@@ -91,6 +91,7 @@ exports.login = function(req, res) {
  */
 exports.createUser = function(req, res) {
   // adjust for payload
+  let cb = {};
   let str = [];
   let finStr;
   req.on('data', (content) => {
@@ -100,6 +101,18 @@ exports.createUser = function(req, res) {
     finStr = (Buffer.concat(str)).toString();
     let request = JSON.parse(finStr);
     request._id = new mongoose.Types.ObjectId();
+
+    // Dumblicate username check
+    let { username } = request;
+    User.find({
+      username: username
+    }, (err, usr) => {
+      if (!usr) {
+        cb.success = false;
+        cb.message = '5014'
+        errCallback(cb, res);
+      }
+    });
   
     let user = new User(request);
     user.save(err => {
