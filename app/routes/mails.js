@@ -86,19 +86,21 @@ exports.mailValid = function(req, res) {
 
 exports.checkValid = function(req, res) {
   let { address, authCode } = req.query;
+  console.log('query:', req.query);
   Mail.findOne({'email': address}, (err, mail) => {
     if (err) {
       errCallback(err, res);
     }
-    if (mail.authCode === authCode) {
+    if (mail && mail.authCode === authCode) {
+      console.log('PLUS!')
       Mail.deleteOne({'email': address}, (err, mail) => {
         if (err) {
           errCallback(err, res);
         }
-        return postSuccessCallback('3012', res);
+        postSuccessCallback('3012', res);
       });
     } else {
-      return errCallback('5013', res);
+      errCallback('5013', res);
     }
   });
 }
