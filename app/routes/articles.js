@@ -116,10 +116,7 @@ exports.article = function(req, res) {
   let { aid } = req.params;
   Article.find({_id: aid}).
   select('author content lastModified meta title _id').
-  populate({
-    path: 'seed',
-    model: Quicklad
-  }).
+  populate('author seed').
   exec((err, article) => {
     if (err) {
       errCallback(err, res);
